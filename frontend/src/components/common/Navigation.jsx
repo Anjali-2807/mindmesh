@@ -1,13 +1,14 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Home, Brain, TrendingUp, Lightbulb } from 'lucide-react';
+import { Home, Brain, TrendingUp, Lightbulb, Info } from 'lucide-react';
 
 export default function Navigation({ view, onViewChange, isMobile = false, className = '' }) {
   const navItems = [
     { id: 'home', label: 'Daily Log', icon: Home },
     { id: 'decisions', label: 'Decisions', icon: Brain },
     { id: 'analytics', label: 'Analytics', icon: TrendingUp },
-    { id: 'insights', label: 'Insights', icon: Lightbulb }
+    { id: 'insights', label: 'Insights', icon: Lightbulb },
+    { id: 'about', label: 'About', icon: Info }
   ];
 
   if (isMobile) {

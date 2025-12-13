@@ -2,7 +2,7 @@ from transformers import pipeline
 import random
 
 class AIEngine:
-    """Advanced AI recommendation engine"""
+    """Advanced AI recommendation engine with context-seeking intelligence"""
     
     def __init__(self):
         self.generator = None
@@ -11,12 +11,162 @@ class AIEngine:
     def initialize(self):
         """Initialize the text generation model"""
         print("🎯 Loading AI Generator...")
-        self.generator = pipeline(
-            "text-generation",
-            model="distilgpt2",
-            device=-1
-        )
-        print("✅ AI Generator ready")
+        try:
+            self.generator = pipeline(
+                "text-generation",
+                model="distilgpt2",
+                device=-1
+            )
+            print("✅ AI Generator ready")
+        except Exception as e:
+            print(f"⚠️ AI Generator initialization failed: {e}")
+            self.generator = None
+    
+    def assess_decision_context(self, decision_data, conversation_history):
+        """
+        Assess if we have enough context to make a decision recommendation.
+        Returns (needs_more_context, questions)
+        """
+        questions = []
+        
+        # Check if we've already asked questions
+        if len(conversation_history) >= 3:
+            # User has answered enough questions
+            return False, []
+        
+        # Analyze what information is missing
+        title = decision_data.get('title', '').lower()
+        description = decision_data.get('description', '').lower()
+        combined_text = f"{title} {description}"
+        
+        # Missing temporal context
+        if not any(word in combined_text for word in ['when', 'deadline', 'soon', 'today', 'tomorrow', 'week', 'month', 'year', 'by']):
+            questions.append({
+                'id': 'timing',
+                'question': 'When do you need to make this decision? Is there a deadline?',
+                'type': 'text',
+                'importance': 'high'
+            })
+        
+        # Missing consequence information
+        if len(description) < 20:
+            questions.append({
+                'id': 'consequences',
+                'question': 'What happens if you choose yes? What happens if you choose no?',
+                'type': 'text',
+                'importance': 'high'
+            })
+        
+        # Missing personal context
+        if not any(word in combined_text for word in ['want', 'need', 'feel', 'think', 'concern', 'worry', 'excited', 'afraid']):
+            questions.append({
+                'id': 'personal_context',
+                'question': 'How do you personally feel about this decision? What are your main concerns or hopes?',
+                'type': 'text',
+                'importance': 'medium'
+            })
+        
+        # Missing alternatives
+        if not any(word in combined_text for word in ['instead', 'alternative', 'other option', 'or']):
+            questions.append({
+                'id': 'alternatives',
+                'question': 'Have you considered any alternatives? What other options are available?',
+                'type': 'text',
+                'importance': 'medium'
+            })
+        
+        # Missing stakeholder information
+        if not any(word in combined_text for word in ['family', 'partner', 'team', 'boss', 'friend', 'people', 'affect', 'impact']):
+            questions.append({
+                'id': 'stakeholders',
+                'question': 'Who else will this decision affect? Have you discussed it with them?',
+                'type': 'text',
+                'importance': 'medium'
+            })
+        
+        # If we have critical missing information, ask
+        critical_questions = [q for q in questions if q['importance'] == 'high']
+        
+        if critical_questions:
+            return True, critical_questions[:2]  # Ask max 2 questions at a time
+        elif questions and len(conversation_history) == 0:
+            # First interaction, ask one clarifying question
+            return True, questions[:1]
+        
+        return False, []
+    
+    def generate_decision_reasoning(self, decision_data, score, capacity_analysis, conversation_history):
+        """
+        Generate detailed reasoning for the decision recommendation.
+        Uses conversation history to provide personalized insights.
+        """
+        title = decision_data.get('title', '')
+        description = decision_data.get('description', '')
+        value = decision_data.get('value', 3)
+        cost = decision_data.get('cost_impact', 3)
+        urgency = decision_data.get('urgency', 3)
+        
+        reasoning = {
+            'summary': '',
+            'key_points': [],
+            'considerations': [],
+            'risks': [],
+            'opportunities': [],
+            'timing_advice': ''
+        }
+        
+        # Generate summary
+        capacity = capacity_analysis.get('capacity', 50)
+        if score > 6:
+            reasoning['summary'] = f"Based on your current capacity ({capacity:.0f}%) and the decision parameters, this appears to be a strong opportunity worth pursuing."
+        elif score > 3:
+            reasoning['summary'] = f"This decision shows promise but requires careful consideration given your current capacity ({capacity:.0f}%)."
+        else:
+            reasoning['summary'] = f"Given your current state (capacity: {capacity:.0f}%), this may not be the optimal time for this decision."
+        
+        # Analyze value vs cost
+        if value > cost:
+            reasoning['opportunities'].append(f"The potential value (rated {value}/5) exceeds the expected cost ({cost}/5), suggesting a favorable outcome.")
+        else:
+            reasoning['risks'].append(f"The cost (rated {cost}/5) is significant compared to the value ({value}/5). Ensure the investment is justified.")
+        
+        # Analyze urgency
+        if urgency >= 4:
+            reasoning['considerations'].append(f"High urgency (rated {urgency}/5) requires quick action, but don't sacrifice quality for speed.")
+            reasoning['timing_advice'] = "Act soon, but ensure you have the capacity to handle it properly."
+        elif urgency <= 2:
+            reasoning['timing_advice'] = "Low urgency gives you time to improve your capacity before committing."
+        
+        # Capacity-based insights
+        if capacity < 50:
+            reasoning['risks'].append("Your current capacity is low. This decision may add stress to an already challenging situation.")
+            reasoning['considerations'].append("Consider what you can delegate or postpone to free up mental energy.")
+        elif capacity > 75:
+            reasoning['opportunities'].append("Your high capacity means you're well-positioned to take on new challenges.")
+        
+        # Analyze conversation history for personalized insights
+        for exchange in conversation_history:
+            answer = exchange.get('answer', '').lower()
+            if 'concern' in answer or 'worry' in answer:
+                reasoning['considerations'].append("You've expressed concerns. Trust your instincts and ensure you're comfortable before proceeding.")
+            if 'excited' in answer or 'want' in answer:
+                reasoning['opportunities'].append("Your enthusiasm is a positive indicator. Passion can drive successful outcomes.")
+        
+        # Generate key points
+        reasoning['key_points'] = [
+            f"Decision Score: {score:.1f}/10 (adjusted for your capacity)",
+            f"Your Current Capacity: {capacity:.0f}% - {capacity_analysis.get('message', 'Moderate capacity')}",
+            f"Value Rating: {value}/5 | Cost Rating: {cost}/5 | Urgency: {urgency}/5"
+        ]
+        
+        # Add timing advice if not already set
+        if not reasoning['timing_advice']:
+            if capacity > 70:
+                reasoning['timing_advice'] = "You're in a good position to make this decision now."
+            else:
+                reasoning['timing_advice'] = "Consider waiting until your capacity improves, unless urgency demands otherwise."
+        
+        return reasoning
     
     def _load_templates(self):
         """Load context-aware recommendation templates"""
@@ -106,72 +256,6 @@ class AIEngine:
                 ]
             },
             
-            # RELATIONSHIPS
-            'relationships': {
-                'schedule': [
-                    "Allow 24 hours before having difficult conversations.",
-                    "Schedule a 30-minute walk to process emotions first.",
-                    "Journal for 15 minutes before addressing the issue.",
-                    "Set boundaries: decide what you will and won't accept."
-                ],
-                'environment': [
-                    "Have conversations in neutral, public spaces if needed.",
-                    "Ensure privacy for emotional discussions - no interruptions.",
-                    "Use 'I feel' statements instead of 'You always' accusations.",
-                    "Create physical space if overwhelmed - it's okay to step back."
-                ],
-                'nutrition': [
-                    "Comfort foods in moderation: warm soup, herbal tea.",
-                    "Avoid emotional eating. Journal instead of snacking.",
-                    "Social support: share a meal with a trusted friend.",
-                    "Self-care treat: favorite healthy meal, dark chocolate."
-                ]
-            },
-            
-            # HIGH PERFORMANCE
-            'peak_performance': {
-                'schedule': [
-                    "Maximize flow state: 3-hour deep work blocks, no meetings.",
-                    "Front-load critical tasks in first 4 hours of the day.",
-                    "60 minutes exercise + 20 minutes meditation at start.",
-                    "Time-block everything. Treat peak hours as sacred."
-                ],
-                'environment': [
-                    "Optimize for focus: clean desk, single monitor, no phone.",
-                    "Temperature: 68-70°F. Blue light filter after 6 PM.",
-                    "Standing desk option. Change posture every 45 minutes.",
-                    "Motivational cues: vision board, progress tracker visible."
-                ],
-                'nutrition': [
-                    "Intermittent fasting: late breakfast for mental clarity.",
-                    "High-protein meals: lean meats, eggs, Greek yogurt.",
-                    "Strategic caffeine: one coffee at 9 AM, green tea at 2 PM.",
-                    "Power snacks: mixed nuts, protein bars, fresh fruit."
-                ]
-            },
-            
-            # RECOVERY / REST
-            'recovery': {
-                'schedule': [
-                    "Active recovery: 30-minute gentle walk, no intense work.",
-                    "Mandatory 8+ hours sleep. In bed by 10 PM tonight.",
-                    "Minimum 3 breaks of 15 minutes doing absolutely nothing.",
-                    "Cut today's work by 50%. Focus on essential tasks only."
-                ],
-                'environment': [
-                    "Create a rest sanctuary: dim lights, comfortable seating.",
-                    "No work emails or notifications after 6 PM today.",
-                    "Use aromatherapy: lavender for relaxation, eucalyptus for breathing.",
-                    "Temperature: slightly cool for better sleep (65-68°F)."
-                ],
-                'nutrition': [
-                    "Anti-inflammatory foods: turmeric, ginger, leafy greens.",
-                    "Hydration focus: coconut water, herbal teas, water with lemon.",
-                    "Light dinners: avoid heavy meals 3 hours before bed.",
-                    "Magnesium-rich: almonds, spinach, dark chocolate for relaxation."
-                ]
-            },
-            
             # GENERAL / BALANCED
             'general': {
                 'schedule': [
@@ -237,25 +321,12 @@ class AIEngine:
         if any(a in category for a in academic_work):
             return 'academic_work'
         
-        # Relationships mapping
-        relationships = ['Breakup', 'Relationship', 'Divorce', 'Conflict', 'Friendship', 'Family']
-        if any(r in category for r in relationships):
-            return 'relationships'
-        
-        # Mode-based mapping
-        if mode == 'Peak Performance':
-            return 'peak_performance'
-        elif mode == 'Recovery' or mode == 'Rest':
-            return 'recovery'
-        
         return 'general'
     
     def _select_recommendation(self, options, context):
         """Select appropriate recommendation from options"""
-        # Smart selection based on context
         selected = random.choice(options)
         
-        # Add context-specific details if generic placeholder
         if '{action}' in selected:
             action = self._get_context_action(context)
             selected = selected.format(action=action)
@@ -321,19 +392,6 @@ class AIEngine:
                     'title': pattern['type'].replace('_', ' ').title(),
                     'message': pattern['description'],
                     'priority': 'high'
-                })
-        
-        # Anomaly detection
-        if len(recent_logs) >= 7:
-            latest_mood = recent_logs[-1]['mood']
-            avg_mood = sum(log['mood'] for log in recent_logs[:-1]) / (len(recent_logs) - 1)
-            
-            if abs(latest_mood - avg_mood) > 2:
-                insights.append({
-                    'type': 'anomaly',
-                    'title': 'Unusual Mood Change',
-                    'message': f'Today\'s mood differs significantly from your average. Check in with yourself.',
-                    'priority': 'medium'
                 })
         
         return sorted(insights, key=lambda x: {'high': 3, 'medium': 2, 'low': 1}[x['priority']], reverse=True)

@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from datetime import datetime, timedelta
 import json
+import traceback
+import numpy as np
 
 from config.settings import get_config
 from models.database import db, DailyLog, Decision, Pattern, Insight
@@ -9,6 +11,7 @@ from services.ml_predictor import MLPredictor
 from services.context_classifier import ContextClassifier
 from services.ai_engine import AIEngine
 from services.knowledge_base import KnowledgeBase
+from utils.validators import validate_metrics, validate_decision_data
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -23,6 +26,25 @@ ml_predictor = MLPredictor()
 context_classifier = ContextClassifier()
 ai_engine = AIEngine()
 knowledge_base = KnowledgeBase()
+
+
+# Helper function to convert numpy types to Python types
+def convert_to_serializable(obj):
+    """Convert numpy types to Python native types for JSON serialization"""
+    if isinstance(obj, np.integer):
+        return int(obj)
+    elif isinstance(obj, np.floating):
+        return float(obj)
+    elif isinstance(obj, np.ndarray):
+        return obj.tolist()
+    elif isinstance(obj, np.bool_):
+        return bool(obj)
+    elif isinstance(obj, dict):
+        return {key: convert_to_serializable(value) for key, value in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_to_serializable(item) for item in obj]
+    return obj
+
 
 # Initialize database and load models
 with app.app_context():
@@ -65,14 +87,15 @@ def analyze_journal():
         
         return jsonify({
             'mood': sentiment['mood_score'],
-            'energy': 3,  # Default, user can adjust
+            'energy': 3,
             'stress': 5 - sentiment['mood_score'] if sentiment['mood_score'] < 3 else 2,
-            'sleep': 7,  # Default
+            'sleep': 7,
             'classification': classification
         })
         
     except Exception as e:
         print(f"Error in analyze_journal: {e}")
+        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
 
@@ -83,9 +106,9 @@ def create_daily_log():
         data = request.json
         
         # Validate required fields
-        required_fields = ['mood', 'energy', 'stress', 'sleep']
-        if not all(field in data for field in required_fields):
-            return jsonify({'error': 'Missing required fields'}), 400
+        is_valid, error_msg = validate_metrics(data)
+        if not is_valid:
+            return jsonify({'error': error_msg}), 400
         
         # Get journal text and classify context
         journal_text = data.get('text', '')
@@ -139,14 +162,15 @@ def create_daily_log():
         # Train ML model if we have enough data
         logs_count = DailyLog.query.count()
         if logs_count == 50 or logs_count % 100 == 0:
-            # Retrain with real data
-            historical_data = DailyLog.query.all()
-            training_data = [{
+            print(f"🔄 Retraining ML models with {logs_count} data points...")
+            historical_logs = DailyLog.query.all()
+            import pandas as pd
+            training_data = pd.DataFrame([{
                 'mood': log.mood,
                 'energy': log.energy,
                 'stress': log.stress,
                 'sleep': log.sleep
-            } for log in historical_data]
+            } for log in historical_logs])
             ml_predictor.train_models(training_data)
         
         response = {
@@ -156,15 +180,15 @@ def create_daily_log():
                 'title': f'Protocol: {category}',
                 'summary': f'Detected Context: {category}. Operating Mode: {mode_prediction["mode"]}.',
                 'mode': mode_prediction['mode'],
-                'mode_confidence': mode_prediction['confidence'],
-                'capacity': round(capacity, 1),
+                'mode_confidence': float(mode_prediction['confidence']),
+                'capacity': float(capacity),
                 'schedule': plan['schedule'],
                 'environment': plan['environment'],
                 'nutrition': plan['nutrition']
             },
             'context': {
                 'category': category,
-                'confidence': classification['confidence'] if classification else None,
+                'confidence': float(classification['confidence']) if classification else None,
                 'urgency': urgency,
                 'keywords': classification['keywords'] if classification else []
             },
@@ -184,67 +208,75 @@ def create_daily_log():
         
     except Exception as e:
         print(f"Error in create_daily_log: {e}")
+        traceback.print_exc()
         db.session.rollback()
         return jsonify({'error': str(e)}), 500
 
 
-@app.route('/api/daily-log/<int:log_id>', methods=['PATCH'])
-def update_daily_log(log_id):
-    """Update a daily log entry (for feedback)"""
-    try:
-        log = DailyLog.query.get(log_id)
-        if not log:
-            return jsonify({'error': 'Log not found'}), 404
-        
-        data = request.json
-        
-        if 'day_rating' in data:
-            log.day_rating = data['day_rating']
-        if 'notes' in data:
-            log.notes = data['notes']
-        
-        db.session.commit()
-        
-        return jsonify({
-            'message': 'Log updated successfully',
-            'log': log.to_dict()
-        })
-        
-    except Exception as e:
-        print(f"Error in update_daily_log: {e}")
-        return jsonify({'error': str(e)}), 500
-
-
-@app.route('/api/analyze-decision', methods=['POST'])
+@app.route('/api/decision/analyze', methods=['POST'])
 def analyze_decision():
-    """Analyze a strategic decision"""
+    """Initial decision analysis - asks for more context if needed"""
     try:
         data = request.json
         
-        # Validate required fields
-        required_fields = ['title', 'cost_impact', 'value', 'urgency']
-        if not all(field in data for field in required_fields):
-            return jsonify({'error': 'Missing required fields'}), 400
+        # Validate basic fields
+        if not data.get('title'):
+            return jsonify({'error': 'Decision title is required'}), 400
         
-        # Get recent logs for capacity calculation
+        # Check if this is initial or follow-up
+        conversation_history = data.get('conversation_history', [])
+        
+        # Get recent logs for capacity calculation (handle empty case)
         week_ago = datetime.utcnow() - timedelta(days=7)
         recent_logs = DailyLog.query.filter(DailyLog.timestamp >= week_ago).all()
         
-        # Calculate current capacity
-        capacity_analysis = ml_predictor.calculate_decision_capacity([
-            {
-                'mood': log.mood,
-                'energy': log.energy,
-                'stress': log.stress,
-                'sleep': log.sleep
-            } for log in recent_logs
-        ])
+        logs_data = [{
+            'mood': log.mood,
+            'energy': log.energy,
+            'stress': log.stress,
+            'sleep': log.sleep
+        } for log in recent_logs] if recent_logs else []
+        
+        # Calculate capacity (handle no data case)
+        if logs_data:
+            capacity_analysis = ml_predictor.calculate_decision_capacity(logs_data)
+        else:
+            capacity_analysis = {
+                'capacity': 50,
+                'confidence': 'low',
+                'message': 'No historical data. Using default capacity.',
+                'context': {
+                    'avg_mood': 3,
+                    'avg_energy': 3,
+                    'avg_stress': 3,
+                    'avg_sleep': 7
+                }
+            }
+        
+        # Convert to serializable format
+        capacity_analysis = convert_to_serializable(capacity_analysis)
+        
+        # Check if we have enough context
+        needs_more_context, questions = ai_engine.assess_decision_context(
+            data, conversation_history
+        )
+        
+        if needs_more_context and not data.get('skip_questions'):
+            return jsonify({
+                'needs_more_context': True,
+                'questions': questions,
+                'capacity': capacity_analysis,
+                'conversation_state': 'gathering_context'
+            })
+        
+        # We have enough context, proceed with analysis
+        # Validate decision data
+        is_valid, error_msg = validate_decision_data(data)
+        if not is_valid:
+            return jsonify({'error': error_msg}), 400
         
         # Calculate decision score
-        # Score = (value * 2) + (urgency * 1.5) - (cost_impact * 2)
         score = (data['value'] * 2) + (data['urgency'] * 1.5) - (data['cost_impact'] * 2)
-        
-        # Adjust score based on capacity
         capacity_factor = capacity_analysis['capacity'] / 100
         adjusted_score = score * capacity_factor
         
@@ -262,6 +294,14 @@ def analyze_decision():
         # Calculate confidence
         confidence = min(95, 50 + (abs(adjusted_score) * 10))
         
+        # Generate reasoning
+        reasoning = ai_engine.generate_decision_reasoning(
+            data, adjusted_score, capacity_analysis, conversation_history
+        )
+        
+        # Convert reasoning to serializable format
+        reasoning = convert_to_serializable(reasoning)
+        
         # Save decision to database
         decision = Decision(
             title=data['title'],
@@ -271,55 +311,57 @@ def analyze_decision():
             time_impact=data.get('time_impact', data['cost_impact']),
             urgency=data['urgency'],
             value=data['value'],
-            calculated_score=adjusted_score,
-            capacity_at_decision=capacity_analysis['capacity'],
+            calculated_score=float(adjusted_score),
+            capacity_at_decision=float(capacity_analysis['capacity']),
             verdict=verdict,
-            confidence=confidence,
-            avg_mood_7d=capacity_analysis['context']['avg_mood'],
-            avg_energy_7d=capacity_analysis['context']['avg_energy'],
-            avg_stress_7d=capacity_analysis['context']['avg_stress']
+            confidence=float(confidence),
+            avg_mood_7d=float(capacity_analysis['context']['avg_mood']),
+            avg_energy_7d=float(capacity_analysis['context']['avg_energy']),
+            avg_stress_7d=float(capacity_analysis['context']['avg_stress'])
         )
         
         db.session.add(decision)
         db.session.commit()
         
-        return jsonify({
+        response = {
             'decision_id': decision.id,
             'verdict': verdict,
             'verdict_detail': verdict_detail,
-            'score': round(adjusted_score, 2),
-            'raw_score': round(score, 2),
-            'confidence': round(confidence, 1),
-            'capacity': capacity_analysis['capacity'],
+            'reasoning': reasoning,
+            'score': float(adjusted_score),
+            'raw_score': float(score),
+            'confidence': float(confidence),
+            'capacity': float(capacity_analysis['capacity']),
             'capacity_message': capacity_analysis['message'],
             'capacity_confidence': capacity_analysis['confidence'],
-            'context': capacity_analysis['context'],
+            'context': convert_to_serializable(capacity_analysis['context']),
             'recommendation': {
-                'proceed': adjusted_score > 3,
+                'proceed': bool(adjusted_score > 3),
                 'best_time': 'Now' if capacity_analysis['capacity'] > 70 else 'When capacity improves',
-                'considerations': [
-                    f"Your current capacity is {capacity_analysis['capacity']:.0f}%",
-                    f"Decision score: {adjusted_score:.1f}/10",
-                    f"Confidence level: {confidence:.0f}%"
-                ]
-            }
-        })
+                'considerations': reasoning.get('key_points', [])
+            },
+            'conversation_state': 'complete'
+        }
+        
+        # Convert entire response to serializable format
+        response = convert_to_serializable(response)
+        
+        return jsonify(response)
         
     except Exception as e:
         print(f"Error in analyze_decision: {e}")
+        traceback.print_exc()
         db.session.rollback()
-        return jsonify({'error': str(e)}), 500
+        return jsonify({'error': str(e), 'details': traceback.format_exc()}), 500
 
 
 @app.route('/api/history', methods=['GET'])
 def get_history():
     """Get daily log history"""
     try:
-        # Get query parameters
         days = request.args.get('days', 30, type=int)
         limit = request.args.get('limit', 100, type=int)
         
-        # Query logs
         cutoff_date = datetime.utcnow() - timedelta(days=days)
         logs = DailyLog.query\
             .filter(DailyLog.timestamp >= cutoff_date)\
@@ -331,6 +373,7 @@ def get_history():
         
     except Exception as e:
         print(f"Error in get_history: {e}")
+        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
 
@@ -338,7 +381,6 @@ def get_history():
 def get_analytics():
     """Get analytics and insights"""
     try:
-        # Get recent logs
         days = request.args.get('days', 30, type=int)
         cutoff_date = datetime.utcnow() - timedelta(days=days)
         logs = DailyLog.query.filter(DailyLog.timestamp >= cutoff_date).all()
@@ -369,7 +411,7 @@ def get_analytics():
         )
         
         # Save insights to database
-        for insight_data in insights[:5]:  # Save top 5
+        for insight_data in insights[:5]:
             existing = Insight.query.filter_by(
                 title=insight_data['title'],
                 insight_type=insight_data['type']
@@ -386,7 +428,7 @@ def get_analytics():
         
         db.session.commit()
         
-        return jsonify({
+        response = {
             'status': 'success',
             'period': f'{days} days',
             'data_points': len(logs),
@@ -394,27 +436,16 @@ def get_analytics():
             'trends': trends.get('trends', {}),
             'patterns': trends.get('patterns', []),
             'insights': insights
-        })
+        }
+        
+        # Convert to serializable format
+        response = convert_to_serializable(response)
+        
+        return jsonify(response)
         
     except Exception as e:
         print(f"Error in get_analytics: {e}")
-        return jsonify({'error': str(e)}), 500
-
-
-@app.route('/api/decisions/history', methods=['GET'])
-def get_decisions_history():
-    """Get decision history"""
-    try:
-        limit = request.args.get('limit', 50, type=int)
-        decisions = Decision.query\
-            .order_by(Decision.timestamp.desc())\
-            .limit(limit)\
-            .all()
-        
-        return jsonify([decision.to_dict() for decision in decisions])
-        
-    except Exception as e:
-        print(f"Error in get_decisions_history: {e}")
+        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
 
@@ -434,16 +465,32 @@ def get_insights():
         
     except Exception as e:
         print(f"Error in get_insights: {e}")
+        traceback.print_exc()
         return jsonify({'error': str(e)}), 500
+
+
+# Error handlers
+@app.errorhandler(404)
+def not_found(error):
+    return jsonify({'error': 'Endpoint not found'}), 404
+
+@app.errorhandler(500)
+def internal_error(error):
+    db.session.rollback()
+    return jsonify({'error': 'Internal server error'}), 500
 
 
 if __name__ == '__main__':
     # Initialize AI services on startup
     print("🚀 Initializing MindMesh AI Engine...")
-    context_classifier.initialize()
-    ai_engine.initialize()
-    ml_predictor.train_models()
-    print("✅ All systems ready!")
+    try:
+        context_classifier.initialize()
+        ai_engine.initialize()
+        ml_predictor.train_models()
+        print("✅ All systems ready!")
+    except Exception as e:
+        print(f"⚠️ Warning: Some AI services failed to initialize: {e}")
+        print("The application will continue but some features may be limited.")
     
-    # Run the app
+    # Run the app on port 5001
     app.run(debug=True, port=5001, host='0.0.0.0')

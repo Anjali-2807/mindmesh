@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Home, Brain, TrendingUp, Lightbulb, Menu, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { Home, Brain, TrendingUp, Lightbulb, Menu, X, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // Import Views
@@ -7,6 +7,7 @@ import HomeView from './views/HomeView';
 import DecisionsView from './views/DecisionsView';
 import AnalyticsView from './views/AnalyticsView';
 import InsightsView from './views/InsightsView';
+import AboutView from './views/AboutView';
 
 // Import Components
 import Navigation from './components/common/Navigation';
@@ -28,7 +29,8 @@ export default function App() {
       home: <HomeView setView={handleViewChange} />,
       decisions: <DecisionsView />,
       analytics: <AnalyticsView />,
-      insights: <InsightsView />
+      insights: <InsightsView />,
+      about: <AboutView />
     };
     return views[view] || views.home;
   };
@@ -39,10 +41,10 @@ export default function App() {
       <header className="fixed top-0 w-full bg-white/70 backdrop-blur-xl border-b border-slate-200/50 z-50 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
+            {/* Logo - Clickable to About */}
             <motion.div 
               className="flex items-center gap-3 cursor-pointer"
-              onClick={() => handleViewChange('home')}
+              onClick={() => handleViewChange('about')}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
@@ -107,11 +109,18 @@ export default function App() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
             <p className="text-sm text-slate-600">
-              MindMesh &copy; 2024 • AI-Powered Life Optimization Platform
+              MindMesh &copy; 2024 • AI-Powered Decision Intelligence System
             </p>
             <p className="text-xs text-slate-500 mt-2">
               Built with React, Flask, Transformers & Machine Learning
             </p>
+            <button
+              onClick={() => handleViewChange('about')}
+              className="mt-3 text-xs text-indigo-600 hover:text-indigo-700 font-semibold flex items-center gap-1 mx-auto"
+            >
+              <Info size={14} />
+              Learn More About MindMesh
+            </button>
           </div>
         </div>
       </footer>
