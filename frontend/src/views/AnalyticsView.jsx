@@ -60,13 +60,30 @@ export default function AnalyticsView() {
     );
   }
 
-  const chartData = logs.reverse().map(log => ({
-    date: new Date(log.timestamp).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
-    mood: log.mood,
-    energy: log.energy,
-    stress: log.stress,
-    sleep: log.sleep
-  }));
+  // Create chart data from logs (don't mutate original array)
+  // Include time to ensure each entry is unique even on the same date
+  const chartData = logs && logs.length > 0
+    ? [...logs].reverse().map(log => {
+        const timestamp = new Date(log.timestamp);
+        const dateStr = timestamp.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+        const timeStr = timestamp.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
+        return {
+          date: `${dateStr} ${timeStr}`,
+          mood: log.mood,
+          energy: log.energy,
+          stress: log.stress,
+          sleep: log.sleep
+        };
+      })
+    : [];
+
+  // Debug logging
+  console.log('=== ANALYTICS DEBUG ===');
+  console.log('logs:', logs);
+  console.log('logs.length:', logs?.length);
+  console.log('chartData:', chartData);
+  console.log('chartData.length:', chartData?.length);
+  console.log('Sample chartData[0]:', chartData?.[0]);
 
   // Prepare forecast data
   const forecastData = advancedAnalytics.forecast?.status === 'success'
@@ -146,32 +163,41 @@ export default function AnalyticsView() {
               <Activity size={24} className="text-indigo-600" />
               Metric Trends Over Time
             </h3>
-            <ResponsiveContainer width="100%" height={400}>
-              <AreaChart data={chartData}>
-                <defs>
-                  <linearGradient id="colorMood" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#10b981" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="colorEnergy" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="colorStress" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#ef4444" stopOpacity={0.4}/>
-                    <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" opacity={0.5} />
-                <XAxis dataKey="date" tick={{fontSize: 12, fill: '#64748b'}} />
-                <YAxis domain={[0, 5]} tick={{fontSize: 12, fill: '#64748b'}} />
-                <Tooltip content={<CustomTooltip />} />
-                <Legend wrapperStyle={{fontSize: '13px', fontWeight: 600}} />
-                <Area type="monotone" dataKey="mood" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorMood)" name="Mood" />
-                <Area type="monotone" dataKey="energy" stroke="#6366f1" strokeWidth={3} fillOpacity={1} fill="url(#colorEnergy)" name="Energy" />
-                <Area type="monotone" dataKey="stress" stroke="#ef4444" strokeWidth={3} fillOpacity={1} fill="url(#colorStress)" name="Stress" />
-              </AreaChart>
-            </ResponsiveContainer>
+            {chartData && chartData.length > 0 ? (
+              <div className="w-full overflow-x-auto">
+                <AreaChart width={800} height={400} data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorMood" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.4}/>
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorEnergy" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#6366f1" stopOpacity={0.4}/>
+                      <stop offset="95%" stopColor="#6366f1" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorStress" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.4}/>
+                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" opacity={0.5} />
+                  <XAxis dataKey="date" tick={{fontSize: 12, fill: '#64748b'}} />
+                  <YAxis domain={[0, 5]} tick={{fontSize: 12, fill: '#64748b'}} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#94a3b8', strokeWidth: 1, strokeDasharray: '5 5' }} />
+                  <Legend wrapperStyle={{fontSize: '13px', fontWeight: 600}} align="center" />
+                  <Area type="monotone" dataKey="mood" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorMood)" name="Mood" activeDot={{ r: 6, strokeWidth: 2, stroke: '#059669' }} dot={{ r: 3, fill: '#10b981' }} />
+                  <Area type="monotone" dataKey="energy" stroke="#6366f1" strokeWidth={3} fillOpacity={1} fill="url(#colorEnergy)" name="Energy" activeDot={{ r: 6, strokeWidth: 2, stroke: '#4f46e5' }} dot={{ r: 3, fill: '#6366f1' }} />
+                  <Area type="monotone" dataKey="stress" stroke="#ef4444" strokeWidth={3} fillOpacity={1} fill="url(#colorStress)" name="Stress" activeDot={{ r: 6, strokeWidth: 2, stroke: '#dc2626' }} dot={{ r: 3, fill: '#ef4444' }} />
+                </AreaChart>
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-[400px] text-slate-500">
+                <Activity className="w-12 h-12 mb-3 opacity-30" />
+                <p className="text-lg font-semibold">No chart data available</p>
+                <p className="text-sm">Chart will appear when data is loaded</p>
+                <p className="text-xs mt-2">Debug: chartData.length = {chartData?.length || 0}</p>
+              </div>
+            )}
           </Card>
 
           {/* Sleep Chart */}
@@ -180,15 +206,15 @@ export default function AnalyticsView() {
               <Moon size={24} className="text-purple-600" />
               Sleep Patterns
             </h3>
-            <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={chartData}>
+            <div className="w-full overflow-x-auto">
+              <BarChart width={800} height={300} data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" opacity={0.5} />
                 <XAxis dataKey="date" tick={{fontSize: 12, fill: '#64748b'}} />
                 <YAxis domain={[0, 12]} tick={{fontSize: 12, fill: '#64748b'}} />
-                <Tooltip content={<CustomTooltip />} />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(139, 92, 246, 0.1)' }} />
                 <Bar dataKey="sleep" fill="#8b5cf6" radius={[10, 10, 0, 0]} name="Hours of Sleep" />
               </BarChart>
-            </ResponsiveContainer>
+            </div>
           </Card>
 
           {/* Correlations */}
