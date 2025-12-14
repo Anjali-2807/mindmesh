@@ -1,5 +1,7 @@
 from transformers import pipeline
 import random
+import pandas as pd
+import numpy as np
 
 class AIEngine:
     """Advanced AI recommendation engine with context-seeking intelligence"""
@@ -395,3 +397,407 @@ class AIEngine:
                 })
         
         return sorted(insights, key=lambda x: {'high': 3, 'medium': 2, 'low': 1}[x['priority']], reverse=True)
+    
+    def generate_analytics_insights(self, analytics_data, health_score, correlations):
+        """
+        Generate natural language insights from analytics data
+        
+        Args:
+            analytics_data: Dict with trends, patterns, etc.
+            health_score: Health score dict
+            correlations: Correlation analysis dict
+            
+        Returns:
+            list of insight dicts with messages and recommendations
+        """
+        insights = []
+        
+        # Health score insight
+        if health_score:
+            score = health_score.get('score', 50)
+            grade = health_score.get('grade', 'C')
+            status = health_score.get('status', 'Fair')
+            trend = health_score.get('trend', 'stable')
+            
+            # Main health insight
+            if score >= 80:
+                insights.append({
+                    'type': 'achievement',
+                    'title': f'Excellent Health Score: {grade}',
+                    'message': f"Your overall wellness is {status.lower()} at {score:.0f}/100. You're doing great!",
+                    'priority': 'high',
+                    'icon': '🌟',
+                    'trend': trend
+                })
+            elif score >= 60:
+                insights.append({
+                    'type': 'information',
+                    'title': f'Good Health Score: {grade}',
+                    'message': f"Your wellness score is {score:.0f}/100 ({status}). There's room for improvement.",
+                    'priority': 'medium',
+                    'icon': '📊',
+                    'trend': trend
+                })
+            else:
+                insights.append({
+                    'type': 'warning',
+                    'title': f'Health Score Needs Attention: {grade}',
+                    'message': f"Your wellness score is {score:.0f}/100. Let's work on improving this together.",
+                    'priority': 'high',
+                    'icon': '⚠️',
+                    'trend': trend
+                })
+            
+            # Trend insight
+            if trend == 'improving':
+                insights.append({
+                    'type': 'achievement',
+                    'title': 'Positive Momentum Detected',
+                    'message': "Your metrics are trending upward. Keep up the great work!",
+                    'priority': 'medium',
+                    'icon': '📈',
+                    'actionable': True,
+                    'action': 'Continue your current routine'
+                })
+            elif trend == 'declining':
+                insights.append({
+                    'type': 'alert',
+                    'title': 'Declining Trend Detected',
+                    'message': "Your wellness metrics are trending downward. It might be time to reassess your routine.",
+                    'priority': 'high',
+                    'icon': '📉',
+                    'actionable': True,
+                    'action': 'Review recent changes and stressors'
+                })
+        
+        # Correlation insights
+        if correlations and correlations.get('status') == 'success':
+            corr_insights = correlations.get('insights', [])
+            for ci in corr_insights[:2]:  # Top 2 correlation insights
+                insights.append({
+                    'type': 'discovery',
+                    'title': 'Pattern Discovered',
+                    'message': ci['message'],
+                    'priority': 'high' if ci.get('actionable') else 'medium',
+                    'icon': '🔍',
+                    'actionable': ci.get('actionable', False),
+                    'action': ci.get('recommendation', '')
+                })
+        
+        # Pattern-based insights from analytics
+        patterns = analytics_data.get('patterns', [])
+        for pattern in patterns[:3]:  # Top 3 patterns
+            severity = pattern.get('severity', 'medium')
+            pattern_type = pattern.get('type', 'unknown').replace('_', ' ').title()
+            
+            if severity == 'high':
+                insights.append({
+                    'type': 'alert',
+                    'title': f'Critical Pattern: {pattern_type}',
+                    'message': pattern.get('description', ''),
+                    'priority': 'high',
+                    'icon': '🚨',
+                    'actionable': True
+                })
+            else:
+                insights.append({
+                    'type': 'information',
+                    'title': f'Pattern Observed: {pattern_type}',
+                    'message': pattern.get('description', ''),
+                    'priority': 'medium',
+                    'icon': '💡'
+                })
+        
+        # Sort by priority
+        priority_order = {'high': 3, 'medium': 2, 'low': 1}
+        insights.sort(key=lambda x: priority_order.get(x.get('priority', 'low'), 1), reverse=True)
+        
+        return insights[:8]  # Return top 8 insights
+    
+    def generate_recommendations(self, health_score, correlations, patterns, forecast):
+        """
+        Generate personalized, actionable recommendations
+        
+        Returns:
+            list of recommendation dicts with specific actions
+        """
+        recommendations = []
+        
+        # Health score-based recommendations
+        if health_score:
+            score = health_score.get('score', 50)
+            breakdown = health_score.get('breakdown', {})
+            
+            # Find weakest component
+            components = {
+                'mood': breakdown.get('mood_contribution', 0),
+                'energy': breakdown.get('energy_contribution', 0),
+                'stress': breakdown.get('stress_contribution', 0),
+                'sleep': breakdown.get('sleep_contribution', 0)
+            }
+            
+            weakest = min(components, key=components.get)
+            
+            if weakest == 'sleep' and components['sleep'] < 8:
+                recommendations.append({
+                    'category': 'Sleep',
+                    'priority': 'high',
+                    'title': 'Improve Sleep Quality',
+                    'description': 'Sleep is your weakest health factor. Better sleep could significantly boost your overall score.',
+                    'actions': [
+                        'Aim for 7-9 hours of sleep per night',
+                        'Establish a consistent bedtime routine',
+                        'Avoid screens 1 hour before bed',
+                        'Keep bedroom cool (65-68°F) and dark'
+                    ],
+                    'potential_impact': '+12 health points',
+                    'icon': '😴'
+                })
+            elif weakest == 'stress' and components['stress'] < 15:
+                recommendations.append({
+                    'category': 'Stress Management',
+                    'priority': 'high',
+                    'title': 'Reduce Stress Levels',
+                    'description': 'Stress is impacting your overall wellness. Managing it better could improve mood and energy.',
+                    'actions': [
+                        'Practice 10 minutes of meditation daily',
+                        'Take regular breaks during work',
+                        'Exercise 20-30 minutes, 3x per week',
+                        'Try the 4-7-8 breathing technique'
+                    ],
+                    'potential_impact': '+15 health points',
+                    'icon': '🧘'
+                })
+            elif weakest == 'energy' and components['energy'] < 25:
+                recommendations.append({
+                    'category': 'Energy Boost',
+                    'priority': 'high',
+                    'title': 'Increase Energy Levels',
+                    'description': 'Low energy is holding you back. Small changes can make a big difference.',
+                    'actions': [
+                        'Eat protein-rich breakfast daily',
+                        'Stay hydrated (8 glasses of water)',
+                        'Take a 15-minute walk in sunlight',
+                        'Limit caffeine after 2 PM'
+                    ],
+                    'potential_impact': '+10 health points',
+                    'icon': '⚡'
+                })
+            elif weakest == 'mood' and components['mood'] < 20:
+                recommendations.append({
+                    'category': 'Mood Enhancement',
+                    'priority': 'high',
+                    'title': 'Boost Your Mood',
+                    'description': 'Your mood could use some attention. Small positive habits can create big changes.',
+                    'actions': [
+                        'Practice gratitude journaling (3 things daily)',
+                        'Connect with friends or family',
+                        'Engage in activities you enjoy',
+                        'Spend 20 minutes in nature'  
+                    ],
+                    'potential_impact': '+13 health points',
+                    'icon': '😊'
+                })
+        
+        # Correlation-based recommendations
+        if correlations and correlations.get('status') == 'success':
+            corr_insights = correlations.get('insights', [])
+            for ci in corr_insights:
+                if ci.get('actionable') and ci.get('type') == 'sleep_energy_link':
+                    recommendations.append({
+                        'category': 'Sleep-Energy Connection',
+                        'priority': 'medium',
+                        'title': 'Leverage Sleep-Energy Link',
+                        'description': ci['message'],
+                        'actions': [
+                            ci.get('recommendation', 'Focus on better sleep'),
+                            'Track how different sleep amounts affect your energy',
+                            'Identify your optimal sleep duration'
+                        ],
+                        'potential_impact': 'Significant energy boost',
+                        'icon': '🔗'
+                    })
+                    break  # Only add one correlation recommendation
+        
+        # Pattern-based recommendations
+        if patterns:
+            for pattern in patterns:
+                if pattern.get('type') == 'elevated_stress' and pattern.get('severity') == 'high':
+                    recommendations.append({
+                        'category': 'Chronic Stress',
+                        'priority': 'high',
+                        'title': 'Address Prolonged Stress',
+                        'description': "You've been under sustained stress. This needs attention to prevent burnout.",
+                        'actions': [
+                            'Identify and address major stressors',
+                            'Consider talking to a counselor',
+                            'Build stress-relief into daily routine',
+                            'Practice saying "no" to non-essential commitments'
+                        ],
+                        'potential_impact': 'Critical for long-term health',
+                        'icon': '🛡️'
+                    })
+                elif pattern.get('type') == 'weekend_effect':
+                    recommendations.append({
+                        'category': 'Work-Life Balance',
+                        'priority': 'medium',
+                        'title': 'Improve Weekday Wellness',
+                        'description': 'Your metrics improve on weekends. Try bringing that balance to weekdays.',
+                        'actions': [
+                            'Take short breaks during work hours',
+                            'Schedule enjoyable activities on weekdays',
+                            'Maintain consistent sleep schedule all week',
+                            'Practice work-life boundaries'
+                        ],
+                        'potential_impact': 'More consistent wellness',
+                        'icon': '⚖️'
+                    })
+        
+        # Forecast-based recommendations
+        if forecast and forecast.get('status') == 'success':
+            predictions = forecast.get('predictions', {})
+            
+            # Check for predicted declines
+            for metric, pred_data in predictions.items():
+                if pred_data.get('trend') == 'declining':
+                    metric_name = metric.capitalize()
+                    recommendations.append({
+                        'category': 'Preventive Action',
+                        'priority': 'medium',
+                        'title': f'Prevent {metric_name} Decline',
+                        'description': f'We predict your {metric} may decline soon. Taking action now can prevent this.',
+                        'actions': [
+                            f'Monitor your {metric} closely over the next week',
+                            'Address any emerging stressors early',
+                            'Maintain healthy routines consistently'
+                        ],
+                        'potential_impact': 'Prevent future issues',
+                        'icon': '🔮'
+                    })
+                    break  # Only add one forecast recommendation
+        
+        return recommendations[:5]  # Return top 5 recommendations
+    
+    def generate_weekly_summary(self, logs_data, analytics_data):
+        """
+        Generate comprehensive weekly summary with highlights
+        
+        Returns:
+            dict with summary, highlights, lowlights, achievements
+        """
+        if len(logs_data) < 3:
+            return {
+                'status': 'insufficient_data',
+                'message': 'Need at least 3 days of data for weekly summary'
+            }
+        
+        df = pd.DataFrame(logs_data)
+        
+        # Calculate key stats
+        avg_mood = df['mood'].mean()
+        avg_energy = df['energy'].mean()
+        avg_stress = df['stress'].mean()
+        avg_sleep = df['sleep'].mean()
+        
+        # Find best and worst days
+        df['overall_score'] = (df['mood'] + df['energy'] + (6 - df['stress'])) / 3
+        best_day_idx = df['overall_score'].idxmax()
+        worst_day_idx = df['overall_score'].idxmin()
+        
+        # Highlights (best moments)
+        highlights = []
+        
+        if df['mood'].max() >= 4.5:
+            highlights.append(f"Peak mood of {df['mood'].max():.1f}/5 achieved!")
+        
+        if df['energy'].max() >= 4.5:
+            highlights.append(f"Excellent energy levels (max: {df['energy'].max():.1f}/5)")
+        
+        if df['stress'].min() <= 1.5:
+            highlights.append(f"Very low stress days recorded (min: {df['stress'].min():.1f}/5)")
+        
+        if avg_sleep >= 7.5:
+            highlights.append(f"Great sleep average: {avg_sleep:.1f} hours/night")
+        
+        # Lowlights (areas for improvement)
+        lowlights = []
+        
+        if df['stress'].max() >= 4.5:
+            lowlights.append(f"High stress spike detected ({df['stress'].max():.1f}/5)")
+        
+        if df['mood'].min() <= 1.5:
+            lowlights.append(f"Low mood day occurred ({df['mood'].min():.1f}/5)")
+        
+        if avg_sleep < 6.5:
+            lowlights.append(f"Sleep below optimal ({avg_sleep:.1f} hours avg)")
+        
+        if df['energy'].min() <= 1.5:
+            lowlights.append(f"Very low energy day ({df['energy'].min():.1f}/5)")
+        
+        # Achievements
+        achievements = []
+        
+        # Consistency achievements
+        if df['mood'].std() < 0.5:
+            achievements.append({
+                'title': 'Emotional Stability',
+                'description': 'Maintained consistent mood all week',
+                'icon': '🎯'
+            })
+        
+        if (df['sleep'] >= 7).sum() >= len(df) * 0.7:
+            achievements.append({
+                'title': 'Sleep Champion',
+                'description': 'Got adequate sleep most days',
+                'icon': '😴'
+            })
+        
+        if avg_stress < 2.5:
+            achievements.append({
+                'title': 'Zen Master',
+                'description': 'Kept stress levels low all week',
+                'icon': '🧘'
+            })
+        
+        if (df[['mood', 'energy']].mean(axis=1) >= 4).sum() >= 3:
+            achievements.append({
+                'title': 'High Performer',
+                'description': '3+ days of excellent mood & energy',
+                'icon': '⚡'
+            })
+        
+        # Overall summary
+        if avg_mood >= 4 and avg_energy >= 4:
+            summary = "Outstanding week! You maintained high mood and energy. Keep doing what you're doing!"
+        elif avg_mood >= 3.5 and avg_energy >= 3.5:
+            summary = "Solid week overall. Good balance across all metrics with room to optimize further."
+        elif avg_stress >= 4:
+            summary = "Stressful week detected. Consider what's driving stress and how to manage it better."
+        elif avg_sleep < 6.5:
+            summary = "Sleep was insufficient this week. Prioritizing rest could improve all other metrics."
+        else:
+            summary = "Mixed week with ups and downs. Focus on consistency and sustainable routines."
+        
+        return {
+            'status': 'success',
+            'period': f'{len(logs_data)} days',
+            'summary': summary,
+            'key_stats': {
+                'avg_mood': round(avg_mood, 2),
+                'avg_energy': round(avg_energy, 2),
+                'avg_stress': round(avg_stress, 2),
+                'avg_sleep': round(avg_sleep, 2),
+                'days_tracked': len(logs_data)
+            },
+            'highlights': highlights,
+            'lowlights': lowlights,
+            'achievements': achievements,
+            'best_day': {
+                'date': df.iloc[best_day_idx].get('timestamp', 'N/A'),
+                'score': round(df.iloc[best_day_idx]['overall_score'], 2)
+            },
+            'worst_day': {
+                'date': df.iloc[worst_day_idx].get('timestamp', 'N/A'),
+                'score': round(df.iloc[worst_day_idx]['overall_score'], 2)
+            }
+        }

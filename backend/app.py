@@ -449,6 +449,93 @@ def get_analytics():
         return jsonify({'error': str(e)}), 500
 
 
+@app.route('/api/analytics/advanced', methods=['GET'])
+def get_advanced_analytics():
+    """Get comprehensive advanced analytics with health score, correlations, forecasts, and insights"""
+    try:
+        days = request.args.get('days', 30, type=int)
+        cutoff_date = datetime.utcnow() - timedelta(days=days)
+        logs = DailyLog.query.filter(DailyLog.timestamp >= cutoff_date).all()
+        
+        if not logs:
+            return jsonify({
+                'status': 'no_data',
+                'message': 'No data available for advanced analysis'
+            })
+        
+        # Prepare data for analysis
+        logs_data = [{
+            'mood': log.mood,
+            'energy': log.energy,
+            'stress': log.stress,
+            'sleep': log.sleep,
+            'timestamp': log.timestamp.isoformat()
+        } for log in logs]
+        
+        # Calculate health score
+        health_score = ml_predictor.calculate_health_score(logs_data)
+        
+        # Detect correlations
+        correlations = ml_predictor.detect_correlations(logs_data)
+        
+        # Forecast next 7 days
+        forecast = ml_predictor.forecast_metrics(logs_data, days=7)
+        
+        # Detect anomalies
+        anomalies = ml_predictor.detect_anomalies(logs_data)
+        
+        # Detect cycles
+        cycles = ml_predictor.detect_cycles(logs_data)
+        
+        # Get basic trend analysis
+        trends = ml_predictor.analyze_trends(logs_data)
+        
+        # Generate AI insights
+        ai_insights = ai_engine.generate_analytics_insights(
+            trends,
+            health_score,
+            correlations
+        )
+        
+        # Generate personalized recommendations
+        recommendations = ai_engine.generate_recommendations(
+            health_score,
+            correlations,
+            trends.get('patterns', []),
+            forecast
+        )
+        
+        # Generate weekly summary
+        weekly_summary = ai_engine.generate_weekly_summary(logs_data, trends)
+        
+        response = {
+            'status': 'success',
+            'period': f'{days} days',
+            'data_points': len(logs),
+            'averages': trends.get('averages', {}),
+            'trends': trends.get('trends', {}),
+            'patterns': trends.get('patterns', []),
+            'health_score': health_score,
+            'correlations': correlations,
+            'forecast': forecast,
+            'anomalies': anomalies,
+            'cycles': cycles,
+            'insights': ai_insights,
+            'recommendations': recommendations,
+            'weekly_summary': weekly_summary
+        }
+        
+        # Convert to serializable format
+        response = convert_to_serializable(response)
+        
+        return jsonify(response)
+        
+    except Exception as e:
+        print(f"Error in get_advanced_analytics: {e}")
+        traceback.print_exc()
+        return jsonify({'error': str(e), 'details': traceback.format_exc()}), 500
+
+
 @app.route('/api/insights', methods=['GET'])
 def get_insights():
     """Get saved insights"""
