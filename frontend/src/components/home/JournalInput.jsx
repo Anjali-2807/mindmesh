@@ -6,11 +6,11 @@ export default function JournalInput({ value, onChange, onAnalyze, isAnalyzing }
   return (
     <div>
       <div className="flex justify-between items-center mb-3">
-        <label className="text-sm font-bold text-slate-700 flex items-center gap-2">
+        <label className="text-sm font-bold text-slate-200 flex items-center gap-2">
           <span className="text-lg">✍️</span>
           Quick Journal
         </label>
-        <span className="text-xs text-slate-500 font-medium">
+        <span className="text-xs text-slate-300 font-medium">
           {value.length}/500 characters
         </span>
       </div>
@@ -45,7 +45,7 @@ export default function JournalInput({ value, onChange, onAnalyze, isAnalyzing }
         </button>
       </div>
       
-      <p className="text-xs text-slate-500 mt-2 flex items-center gap-1">
+      <p className="text-xs text-slate-300 mt-2 flex items-center gap-1">
         <Sparkles size={12} />
         AI will detect context and auto-adjust your metrics
       </p>

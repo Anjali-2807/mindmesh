@@ -43,7 +43,7 @@ export default function InsightCards({ insights = [], recommendations = [] }) {
       low: {
         bg: 'bg-gradient-to-br from-slate-50 to-gray-50',
         border: 'border-slate-200',
-        icon: 'text-slate-600',
+        icon: 'text-slate-700',
         badge: 'bg-slate-100 text-slate-700'
       }
     };
@@ -64,7 +64,7 @@ export default function InsightCards({ insights = [], recommendations = [] }) {
           <div className="flex items-center gap-2 mb-4">
             <Sparkles className="text-indigo-600" size={24} />
             <h2 className="text-2xl font-bold text-slate-900">AI Insights</h2>
-            <span className="ml-auto text-sm text-slate-500">{insights.length} insights</span>
+            <span className="ml-auto text-sm text-slate-600">{insights.length} insights</span>
           </div>
 
           <div className="grid gap-4">
@@ -106,7 +106,7 @@ export default function InsightCards({ insights = [], recommendations = [] }) {
                             {insight.priority}
                           </span>
                           {insight.actionable && (
-                            <button className="text-slate-600 hover:text-slate-900 transition-colors">
+                            <button className="text-slate-700 hover:text-slate-900 transition-colors">
                               {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                             </button>
                           )}
@@ -127,7 +127,7 @@ export default function InsightCards({ insights = [], recommendations = [] }) {
                               <p className="text-sm font-semibold text-slate-700 mb-2">
                                 💡 Recommended Action:
                               </p>
-                              <p className="text-sm text-slate-600">
+                              <p className="text-sm text-slate-700">
                                 {insight.action}
                               </p>
                             </div>
@@ -149,7 +149,7 @@ export default function InsightCards({ insights = [], recommendations = [] }) {
           <div className="flex items-center gap-2 mb-4">
             <TrendingUp className="text-purple-600" size={24} />
             <h2 className="text-2xl font-bold text-slate-900">Personalized Recommendations</h2>
-            <span className="ml-auto text-sm text-slate-500">{recommendations.length} recommendations</span>
+            <span className="ml-auto text-sm text-slate-600">{recommendations.length} recommendations</span>
           </div>
 
           <div className="grid gap-4">
@@ -177,7 +177,7 @@ export default function InsightCards({ insights = [], recommendations = [] }) {
                         <div className="flex-1">
                           <div className="flex items-center gap-3 mb-2">
                             {rec.icon && <span className="text-2xl">{rec.icon}</span>}
-                            <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                            <span className="text-xs font-bold text-slate-600 uppercase tracking-wider">
                               {rec.category}
                             </span>
                           </div>
@@ -189,7 +189,7 @@ export default function InsightCards({ insights = [], recommendations = [] }) {
                           </p>
                         </div>
                         
-                        <button className="flex-shrink-0 text-slate-600 hover:text-slate-900 transition-colors">
+                        <button className="flex-shrink-0 text-slate-700 hover:text-slate-900 transition-colors">
                           {isExpanded ? <ChevronUp size={24} /> : <ChevronDown size={24} />}
                         </button>
                       </div>
@@ -250,9 +250,9 @@ export default function InsightCards({ insights = [], recommendations = [] }) {
       {/* Empty State */}
       {(!insights || insights.length === 0) && (!recommendations || recommendations.length === 0) && (
         <div className="text-center py-16 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-300">
-          <Lightbulb className="w-16 h-16 text-slate-400 mx-auto mb-4" />
+          <Lightbulb className="w-16 h-16 text-slate-600 mx-auto mb-4" />
           <h3 className="text-lg font-bold text-slate-700 mb-2">No Insights Yet</h3>
-          <p className="text-slate-600">
+          <p className="text-slate-700">
             Keep logging your daily metrics to unlock personalized insights and recommendations.
           </p>
         </div>

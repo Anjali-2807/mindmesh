@@ -49,7 +49,7 @@ function NavButton({ item, active, onClick }) {
       className={`relative px-4 py-2 rounded-xl font-semibold text-sm transition-all flex items-center gap-2 ${
         active
           ? 'text-white'
-          : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+          : 'text-slate-300 hover:text-white hover:bg-white/10'
       }`}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
@@ -57,7 +57,11 @@ function NavButton({ item, active, onClick }) {
       {active && (
         <motion.div
           layoutId="activeTab"
-          className="absolute inset-0 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-xl shadow-lg"
+          className="absolute inset-0 rounded-xl"
+          style={{ 
+            background: 'linear-gradient(135deg, #818cf8, #a78bfa)',
+            boxShadow: '0 0 30px rgba(129, 140, 248, 0.5), 0 0 60px rgba(167, 139, 250, 0.3)' 
+          }}
           transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
         />
       )}
@@ -77,9 +81,12 @@ function MobileNavButton({ item, active, onClick }) {
       onClick={onClick}
       className={`w-full px-4 py-3 rounded-xl font-semibold text-sm transition-all flex items-center gap-3 ${
         active
-          ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
-          : 'text-slate-600 hover:bg-slate-100'
+          ? 'bg-gradient-to-r from-indigo-400 to-purple-500 text-white shadow-lg'
+          : 'text-slate-300 hover:bg-white/10 hover:text-white'
       }`}
+      style={active ? {
+        boxShadow: '0 0 25px rgba(129, 140, 248, 0.4)'
+      } : {}}
     >
       <Icon size={20} />
       <span>{item.label}</span>

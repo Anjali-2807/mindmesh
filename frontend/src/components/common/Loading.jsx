@@ -24,7 +24,7 @@ export default function Loading({ size = 'md', color = 'indigo', text = '' }) {
         transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
       />
       {text && (
-        <p className="text-sm text-slate-600 font-medium animate-pulse">
+        <p className="text-sm text-slate-200 font-medium animate-pulse">
           {text}
         </p>
       )}

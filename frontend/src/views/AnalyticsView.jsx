@@ -53,9 +53,9 @@ export default function AnalyticsView() {
   if (!advancedAnalytics || advancedAnalytics.status === 'no_data') {
     return (
       <Card className="text-center py-16">
-        <Activity className="w-16 h-16 text-slate-400 mx-auto mb-4" />
-        <p className="text-slate-600 text-lg mb-4">No data available yet</p>
-        <p className="text-slate-500 text-sm">Start logging your daily metrics to unlock advanced analytics and insights</p>
+        <Activity className="w-16 h-16 text-slate-300 mx-auto mb-4" />
+        <p className="text-slate-200 text-lg mb-4">No data available yet</p>
+        <p className="text-slate-300 text-sm">Start logging your daily metrics to unlock advanced analytics and insights</p>
       </Card>
     );
   }
@@ -104,10 +104,10 @@ export default function AnalyticsView() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-blue-600 via-cyan-600 to-teal-600 bg-clip-text text-transparent tracking-tight">
+          <h1 className="text-4xl sm:text-5xl font-extrabold text-gradient-primary tracking-tight">
             Advanced Analytics
           </h1>
-          <p className="text-slate-600 text-lg mt-2 font-medium">
+          <p className="text-slate-300 text-lg mt-2 font-medium">
             {advancedAnalytics.data_points} data points • {advancedAnalytics.period} analysis
           </p>
         </div>
@@ -118,7 +118,7 @@ export default function AnalyticsView() {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-gradient-to-br from-white via-blue-50/30 to-indigo-50/30 border-2 border-indigo-200 rounded-3xl p-8 shadow-xl"
+        className="glass-glow rounded-3xl p-8"
       >
         <HealthScore 
           healthScore={advancedAnalytics.health_score} 
@@ -133,7 +133,7 @@ export default function AnalyticsView() {
       />
 
       {/* Tab Navigation */}
-      <div className="flex gap-2 bg-white rounded-xl p-2 border-2 border-slate-200 shadow-sm">
+      <div className="flex gap-2 glass rounded-xl p-2 border border-white/20">
         {[
           { id: 'overview', label: 'Overview', icon: Activity },
           { id: 'forecast', label: 'Forecast', icon: TrendingUp },
@@ -144,8 +144,8 @@ export default function AnalyticsView() {
             onClick={() => setActiveTab(tab.id)}
             className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-semibold transition-all ${
               activeTab === tab.id
-                ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
-                : 'text-slate-600 hover:bg-slate-50'
+                ? 'bg-gradient-to-r from-indigo-400 to-purple-500 text-white shadow-lg'
+                : 'text-slate-300 hover:bg-white/10'
             }`}
           >
             <tab.icon size={18} />
@@ -159,8 +159,8 @@ export default function AnalyticsView() {
         <div className="space-y-8">
           {/* Main Trend Chart */}
           <Card className="hover-lift">
-            <h3 className="font-bold text-slate-900 mb-6 text-xl flex items-center gap-2">
-              <Activity size={24} className="text-indigo-600" />
+            <h3 className="font-bold text-white mb-6 text-xl flex items-center gap-2">
+              <Activity size={24} className="text-indigo-400" />
               Metric Trends Over Time
             </h3>
             {chartData && chartData.length > 0 ? (
@@ -180,10 +180,10 @@ export default function AnalyticsView() {
                       <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
                     </linearGradient>
                   </defs>
-                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" opacity={0.5} />
-                  <XAxis dataKey="date" tick={{fontSize: 12, fill: '#64748b'}} />
-                  <YAxis domain={[0, 5]} tick={{fontSize: 12, fill: '#64748b'}} />
-                  <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#94a3b8', strokeWidth: 1, strokeDasharray: '5 5' }} />
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#475569" opacity={0.3} />
+                  <XAxis dataKey="date" tick={{fontSize: 12, fill: '#cbd5e1'}} />
+                  <YAxis domain={[0, 5]} tick={{fontSize: 12, fill: '#cbd5e1'}} />
+                  <Tooltip content={<CustomTooltip />} cursor={{ stroke: '#818cf8', strokeWidth: 1, strokeDasharray: '5 5' }} />
                   <Legend wrapperStyle={{fontSize: '13px', fontWeight: 600}} align="center" />
                   <Area type="monotone" dataKey="mood" stroke="#10b981" strokeWidth={3} fillOpacity={1} fill="url(#colorMood)" name="Mood" activeDot={{ r: 6, strokeWidth: 2, stroke: '#059669' }} dot={{ r: 3, fill: '#10b981' }} />
                   <Area type="monotone" dataKey="energy" stroke="#6366f1" strokeWidth={3} fillOpacity={1} fill="url(#colorEnergy)" name="Energy" activeDot={{ r: 6, strokeWidth: 2, stroke: '#4f46e5' }} dot={{ r: 3, fill: '#6366f1' }} />
@@ -191,7 +191,7 @@ export default function AnalyticsView() {
                 </AreaChart>
               </div>
             ) : (
-              <div className="flex flex-col items-center justify-center h-[400px] text-slate-500">
+              <div className="flex flex-col items-center justify-center h-[400px] text-slate-300">
                 <Activity className="w-12 h-12 mb-3 opacity-30" />
                 <p className="text-lg font-semibold">No chart data available</p>
                 <p className="text-sm">Chart will appear when data is loaded</p>
@@ -202,17 +202,17 @@ export default function AnalyticsView() {
 
           {/* Sleep Chart */}
           <Card className="hover-lift">
-            <h3 className="font-bold text-slate-900 mb-6 text-xl flex items-center gap-2">
-              <Moon size={24} className="text-purple-600" />
+            <h3 className="font-bold text-white mb-6 text-xl flex items-center gap-2">
+              <Moon size={24} className="text-purple-400" />
               Sleep Patterns
             </h3>
             <div className="w-full overflow-x-auto">
               <BarChart width={800} height={300} data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" opacity={0.5} />
-                <XAxis dataKey="date" tick={{fontSize: 12, fill: '#64748b'}} />
-                <YAxis domain={[0, 12]} tick={{fontSize: 12, fill: '#64748b'}} />
-                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(139, 92, 246, 0.1)' }} />
-                <Bar dataKey="sleep" fill="#8b5cf6" radius={[10, 10, 0, 0]} name="Hours of Sleep" />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#475569" opacity={0.3} />
+                <XAxis dataKey="date" tick={{fontSize: 12, fill: '#cbd5e1'}} />
+                <YAxis domain={[0, 12]} tick={{fontSize: 12, fill: '#cbd5e1'}} />
+                <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(167, 139, 250, 0.15)' }} />
+                <Bar dataKey="sleep" fill="#a78bfa" radius={[10, 10, 0, 0]} name="Hours of Sleep" />
               </BarChart>
             </div>
           </Card>
@@ -240,15 +240,15 @@ export default function AnalyticsView() {
                   <div className="text-sm font-semibold text-purple-700 mb-2">{item.metric}</div>
                   <div className="flex items-baseline gap-2">
                     <span className="text-2xl font-bold text-slate-900">{item.current.toFixed(1)}</span>
-                    <span className="text-slate-400">→</span>
+                    <span className="text-slate-600">→</span>
                     <span className="text-2xl font-bold text-purple-600">{item.predicted.toFixed(1)}</span>
                   </div>
                   <div className="mt-2 flex items-center gap-1 text-xs">
                     {item.trend === 'improving' && <TrendingUp size={14} className="text-green-600" />}
                     {item.trend === 'declining' && <TrendingDown size={14} className="text-red-600" />}
-                    {item.trend === 'stable' && <Minus size={14} className="text-slate-600" />}
-                    <span className="capitalize text-slate-600">{item.trend}</span>
-                    <span className="ml-auto text-slate-500">({item.confidence})</span>
+                    {item.trend === 'stable' && <Minus size={14} className="text-slate-500" />}
+                    <span className="capitalize text-slate-700">{item.trend}</span>
+                    <span className="ml-auto text-slate-600">({item.confidence})</span>
                   </div>
                 </div>
               ))}
@@ -284,7 +284,7 @@ export default function AnalyticsView() {
                       </div>
                       <div className="text-right flex-shrink-0">
                         <div className="text-xl font-bold text-slate-900">{anomaly.value}</div>
-                        <div className="text-xs text-slate-500">{anomaly.expected_range}</div>
+                        <div className="text-xs text-slate-600">{anomaly.expected_range}</div>
                       </div>
                     </div>
                   </div>
@@ -321,7 +321,7 @@ export default function AnalyticsView() {
                     {cycle.weekday_avg && cycle.weekend_avg && (
                       <div className="flex gap-4 text-sm">
                         <div className="flex-1 bg-slate-50 rounded-lg p-3">
-                          <div className="text-slate-600 font-semibold mb-1">Weekday Avg</div>
+                          <div className="text-slate-700 font-semibold mb-1">Weekday Avg</div>
                           <div className="text-2xl font-bold text-slate-900">{cycle.weekday_avg}</div>
                         </div>
                         <div className="flex-1 bg-cyan-50 rounded-lg p-3">
@@ -419,7 +419,7 @@ function TimeRangeSelector({ value, onChange }) {
           className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all button-press ${
             value === option.value
               ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
-              : 'bg-white text-slate-600 border-2 border-slate-200 hover:border-indigo-300'
+              : 'bg-white text-slate-700 border-2 border-slate-200 hover:border-indigo-300'
           }`}
         >
           {option.label}
@@ -432,12 +432,12 @@ function TimeRangeSelector({ value, onChange }) {
 function CustomTooltip({ active, payload }) {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white p-4 border-2 border-slate-200 shadow-2xl rounded-xl">
-        <p className="text-xs font-bold text-slate-600 mb-2">{payload[0].payload.date}</p>
+      <div className="glass border border-white/20 p-4 shadow-2xl rounded-xl">
+        <p className="text-xs font-bold text-slate-300 mb-2">{payload[0].payload.date}</p>
         {payload.map((entry, index) => (
           <div key={index} className="flex items-center justify-between gap-4 text-sm">
             <span style={{ color: entry.color }} className="font-semibold">{entry.name}:</span>
-            <span className="font-bold" style={{ color: entry.color }}>
+            <span className="font-bold text-white">
               {entry.value.toFixed(1)}
             </span>
           </div>

@@ -69,13 +69,13 @@ export default function HealthScore({ healthScore, isLoading = false }) {
   const getTrendIcon = () => {
     if (trend === 'improving') return <TrendingUp className="text-green-600" size={20} />;
     if (trend === 'declining') return <TrendingDown className="text-red-600" size={20} />;
-    return <Minus className="text-slate-500" size={20} />;
+    return <Minus className="text-slate-300" size={20} />;
   };
 
   const getTrendText = () => {
     if (trend === 'improving') return { text: 'Improving', color: 'text-green-600' };
     if (trend === 'declining') return { text: 'Declining', color: 'text-red-600' };
-    return { text: 'Stable', color: 'text-slate-600' };
+    return { text: 'Stable', color: 'text-slate-200' };
   };
 
   const trendInfo = getTrendText();
@@ -131,7 +131,7 @@ export default function HealthScore({ healthScore, isLoading = false }) {
             <div className={`text-6xl font-extrabold ${colors.text}`}>
               {Math.round(displayScore)}
             </div>
-            <div className="text-2xl font-bold text-slate-400 -mt-1">/ 100</div>
+            <div className="text-2xl font-bold text-slate-300 -mt-1">/ 100</div>
             <div className="mt-2 px-4 py-1 bg-white rounded-full shadow-sm">
               <span className={`text-lg font-bold ${colors.text}`}>{grade}</span>
             </div>
@@ -146,13 +146,13 @@ export default function HealthScore({ healthScore, isLoading = false }) {
         transition={{ delay: 0.8 }}
         className="mt-6 text-center"
       >
-        <h3 className="text-2xl font-bold text-slate-900">{status}</h3>
+        <h3 className="text-2xl font-bold text-white">{status}</h3>
         <div className="flex items-center gap-2 justify-center mt-2">
           {getTrendIcon()}
           <span className={`text-sm font-semibold ${trendInfo.color}`}>
             {trendInfo.text}
           </span>
-          <span className="text-xs text-slate-500 ml-2">
+          <span className="text-xs text-slate-300 ml-2">
             ({confidence} confidence)
           </span>
         </div>
@@ -167,8 +167,8 @@ export default function HealthScore({ healthScore, isLoading = false }) {
       >
         <div className="bg-white/50 rounded-2xl p-6 backdrop-blur-sm border border-slate-200">
           <div className="flex items-center gap-2 mb-4">
-            <Info size={16} className="text-slate-600" />
-            <h4 className="text-sm font-bold text-slate-700 uppercase tracking-wide">
+            <Info size={16} className="text-slate-200" />
+            <h4 className="text-sm font-bold text-slate-200 uppercase tracking-wide">
               Score Breakdown
             </h4>
           </div>
@@ -182,8 +182,8 @@ export default function HealthScore({ healthScore, isLoading = false }) {
             }).map(([label, value]) => (
               <div key={label}>
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="font-medium text-slate-700">{label}</span>
-                  <span className="font-bold text-slate-900">{value?.toFixed(1) || 0}</span>
+                  <span className="font-medium text-slate-200">{label}</span>
+                  <span className="font-bold text-white">{value?.toFixed(1) || 0}</span>
                 </div>
                 <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
                   <motion.div
@@ -199,7 +199,7 @@ export default function HealthScore({ healthScore, isLoading = false }) {
             {breakdown.consistency_bonus !== 0 && (
               <div className="pt-3 border-t border-slate-200">
                 <div className="flex justify-between text-sm">
-                  <span className="font-medium text-slate-700">Consistency Bonus</span>
+                  <span className="font-medium text-slate-200">Consistency Bonus</span>
                   <span className={`font-bold ${breakdown.consistency_bonus > 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {breakdown.consistency_bonus > 0 ? '+' : ''}{breakdown.consistency_bonus?.toFixed(1) || 0}%
                   </span>

@@ -81,7 +81,7 @@ export default function HomeView({ setView }) {
         <h1 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 bg-clip-text text-transparent tracking-tight">
           Daily Optimization
         </h1>
-        <p className="text-slate-600 text-lg mt-3 font-medium">
+        <p className="text-slate-200 text-lg mt-3 font-medium">
           Calibrate your day with AI-powered insights
         </p>
       </motion.div>
@@ -103,7 +103,7 @@ export default function HomeView({ setView }) {
                 <div className="w-full border-t border-slate-200"></div>
               </div>
               <div className="relative flex justify-center text-xs">
-                <span className="px-3 bg-white text-slate-500 uppercase tracking-wide font-semibold">
+                <span className="px-3 bg-white text-slate-700 uppercase tracking-wide font-semibold">
                   Daily Metrics
                 </span>
               </div>
@@ -143,7 +143,7 @@ export default function HomeView({ setView }) {
                   iconActive="😰"
                 />
                 <div className="space-y-3">
-                  <label className="text-sm font-bold text-slate-700 tracking-wide flex items-center gap-2">
+                  <label className="text-sm font-bold text-slate-200 tracking-wide flex items-center gap-2">
                     <span className="text-lg">😴</span> Hours Slept
                   </label>
                   <div className="relative">
@@ -156,7 +156,7 @@ export default function HomeView({ setView }) {
                       onChange={(e) => setForm({ ...form, sleep: parseFloat(e.target.value) || 0 })}
                       className="w-full h-14 pl-4 pr-16 rounded-xl bg-slate-50 border-2 border-slate-200 text-slate-900 text-lg font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all"
                     />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-400 uppercase tracking-wider">
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm font-bold text-slate-300 uppercase tracking-wider">
                       Hours
                     </span>
                   </div>

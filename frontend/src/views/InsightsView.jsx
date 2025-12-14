@@ -50,7 +50,7 @@ export default function InsightsView() {
         <h1 className="text-4xl font-extrabold bg-gradient-to-r from-amber-600 via-orange-600 to-red-600 bg-clip-text text-transparent tracking-tight">
           AI Insights
         </h1>
-        <p className="text-slate-600 text-lg mt-2 font-medium">
+        <p className="text-slate-200 text-lg mt-2 font-medium">
           Personalized recommendations based on your patterns
         </p>
       </div>
@@ -92,9 +92,9 @@ export default function InsightsView() {
       {/* Insights List */}
       {filteredInsights.length === 0 ? (
         <Card className="text-center py-16">
-          <Lightbulb size={48} className="mx-auto text-slate-400 mb-4" />
-          <p className="text-slate-600 text-lg mb-2">No insights yet</p>
-          <p className="text-slate-500 text-sm">Keep logging to get personalized AI insights</p>
+          <Lightbulb size={48} className="mx-auto text-slate-300 mb-4" />
+          <p className="text-slate-200 text-lg mb-2">No insights yet</p>
+          <p className="text-slate-300 text-sm">Keep logging to get personalized AI insights</p>
         </Card>
       ) : (
         <div className="space-y-4">
@@ -120,7 +120,7 @@ function FilterButton({ label, active, onClick, count }) {
       className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ${
         active
           ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg'
-          : 'bg-white text-slate-600 border-2 border-slate-200 hover:border-amber-300'
+          : 'bg-white text-slate-700 border-2 border-slate-200 hover:border-amber-300'
       }`}
     >
       {label}
@@ -186,7 +186,7 @@ function InsightCard({ insight, onDismiss }) {
       <Card className={`${colors.bg} border-2 relative`}>
         <button
           onClick={onDismiss}
-          className="absolute top-4 right-4 text-slate-400 hover:text-slate-600 transition-colors"
+          className="absolute top-4 right-4 text-slate-300 hover:text-slate-200 transition-colors"
         >
           <X size={20} />
         </button>
@@ -198,28 +198,28 @@ function InsightCard({ insight, onDismiss }) {
 
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
-              <h3 className="font-bold text-slate-900 text-lg">{insight.title}</h3>
+              <h3 className="font-bold text-white text-lg">{insight.title}</h3>
               <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${colors.badge}`}>
                 {insight.priority}
               </span>
             </div>
 
-            <p className="text-slate-700 leading-relaxed mb-4">{insight.message}</p>
+            <p className="text-slate-200 leading-relaxed mb-4">{insight.message}</p>
 
             {insight.related_metric && (
               <div className="bg-white/50 px-4 py-2 rounded-lg inline-block text-sm">
-                <span className="text-slate-600 font-medium">Related to: </span>
-                <span className="font-bold text-slate-900 capitalize">{insight.related_metric}</span>
+                <span className="text-slate-200 font-medium">Related to: </span>
+                <span className="font-bold text-white capitalize">{insight.related_metric}</span>
               </div>
             )}
 
             <div className="flex items-center gap-2 mt-4 pt-4 border-t border-slate-200">
-              <span className="text-xs text-slate-500 font-medium">Was this insight helpful?</span>
+              <span className="text-xs text-slate-300 font-medium">Was this insight helpful?</span>
               <button className="p-2 hover:bg-white rounded-lg transition-colors">
-                <ThumbsUp size={14} className="text-slate-600" />
+                <ThumbsUp size={14} className="text-slate-200" />
               </button>
               <button className="p-2 hover:bg-white rounded-lg transition-colors">
-                <ThumbsDown size={14} className="text-slate-600" />
+                <ThumbsDown size={14} className="text-slate-200" />
               </button>
             </div>
           </div>

@@ -14,13 +14,13 @@ export default function Input({
   return (
     <div className={`space-y-2 ${className}`}>
       {label && (
-        <label className="block text-sm font-bold text-slate-700 tracking-wide">
+        <label className="block text-sm font-bold text-slate-200 tracking-wide">
           {label}
         </label>
       )}
       <div className="relative">
         {icon && (
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-300">
             {icon}
           </div>
         )}
@@ -31,7 +31,7 @@ export default function Input({
           placeholder={placeholder}
           className={`w-full h-12 ${icon ? 'pl-12' : 'pl-4'} pr-4 rounded-xl bg-slate-50 border-2 ${
             error ? 'border-red-500' : 'border-slate-200'
-          } text-slate-900 font-medium placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all`}
+          } text-white font-medium placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all`}
           {...props}
         />
       </div>
@@ -55,7 +55,7 @@ export function TextArea({
   return (
     <div className={`space-y-2 ${className}`}>
       {label && (
-        <label className="block text-sm font-bold text-slate-700 tracking-wide">
+        <label className="block text-sm font-bold text-slate-200 tracking-wide">
           {label}
         </label>
       )}
@@ -66,7 +66,7 @@ export function TextArea({
         rows={rows}
         className={`w-full p-4 rounded-xl bg-slate-50 border-2 ${
           error ? 'border-red-500' : 'border-slate-200'
-        } text-slate-900 font-medium placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all resize-none`}
+        } text-white font-medium placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all resize-none`}
         {...props}
       />
       {error && (
@@ -88,7 +88,7 @@ export function Select({
   return (
     <div className={`space-y-2 ${className}`}>
       {label && (
-        <label className="block text-sm font-bold text-slate-700 tracking-wide">
+        <label className="block text-sm font-bold text-slate-200 tracking-wide">
           {label}
         </label>
       )}
@@ -97,7 +97,7 @@ export function Select({
         onChange={(e) => onChange(e.target.value)}
         className={`w-full h-12 px-4 rounded-xl bg-slate-50 border-2 ${
           error ? 'border-red-500' : 'border-slate-200'
-        } text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all cursor-pointer`}
+        } text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all cursor-pointer`}
         {...props}
       >
         {options.map((option, index) => (

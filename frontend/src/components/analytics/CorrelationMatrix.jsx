@@ -28,7 +28,7 @@ export default function CorrelationMatrix({ correlations }) {
     const labels = {
       strong: { text: 'Strong', color: 'text-green-700', bg: 'bg-green-50', border: 'border-green-200' },
       moderate: { text: 'Moderate', color: 'text-blue-700', bg: 'bg-blue-50', border: 'border-blue-200' },
-      weak: { text: 'Weak', color: 'text-slate-700', bg: 'bg-slate-50', border: 'border-slate-200' },
+      weak: { text: 'Weak', color: 'text-slate-200', bg: 'bg-slate-50', border: 'border-slate-200' },
       negligible: { text: 'Negligible', color: 'text-gray-700', bg: 'bg-gray-50', border: 'border-gray-200' }
     };
     return labels[strength] || labels.weak;
@@ -39,7 +39,7 @@ export default function CorrelationMatrix({ correlations }) {
       {/* Header */}
       <div className="flex items-center gap-2">
         <Link2 className="text-indigo-600" size={24} />
-        <h2 className="text-2xl font-bold text-slate-900">Metric Correlations</h2>
+        <h2 className="text-2xl font-bold text-white">Metric Correlations</h2>
       </div>
 
       {/* Strongest Correlation Highlight */}
@@ -99,7 +99,7 @@ export default function CorrelationMatrix({ correlations }) {
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-2">
                     <span className="font-bold text-slate-900 capitalize">{corr.metrics[0]}</span>
-                    <span className="text-slate-400">↔️</span>
+                    <span className="text-slate-600">↔️</span>
                     <span className="font-bold text-slate-900 capitalize">{corr.metrics[1]}</span>
                   </div>
                   
@@ -126,7 +126,7 @@ export default function CorrelationMatrix({ correlations }) {
               </div>
 
               {/* Direction indicator */}
-              <div className="mt-3 flex items-center gap-2 text-sm text-slate-600">
+              <div className="mt-3 flex items-center gap-2 text-sm text-slate-700">
                 {corr.direction === 'positive' ? (
                   <>
                     <TrendingUp size={16} className="text-green-600" />

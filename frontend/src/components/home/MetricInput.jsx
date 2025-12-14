@@ -13,7 +13,7 @@ export default function MetricInput({
   return (
     <div className="space-y-3">
       <div className="flex justify-between items-end">
-        <span className="text-sm font-bold text-slate-700 tracking-wide flex items-center gap-2">
+        <span className="text-sm font-bold text-slate-200 tracking-wide flex items-center gap-2">
           <span className="text-lg">{value >= 4 ? iconActive : icon}</span>
           {label}
         </span>
@@ -33,7 +33,7 @@ export default function MetricInput({
         ))}
       </div>
       
-      <div className="flex justify-between text-[10px] uppercase tracking-wider text-slate-400 font-semibold px-1">
+      <div className="flex justify-between text-[10px] uppercase tracking-wider text-slate-300 font-semibold px-1">
         <span>{minLabel}</span>
         <span>{maxLabel}</span>
       </div>
@@ -49,7 +49,7 @@ function MetricButton({ number, isActive, onClick }) {
       className={`h-14 rounded-xl font-bold text-base transition-all flex items-center justify-center ${
         isActive
           ? 'bg-gradient-to-br from-indigo-600 to-purple-600 text-white shadow-lg shadow-indigo-200'
-          : 'bg-slate-50 text-slate-400 border-2 border-slate-200 hover:border-indigo-300 hover:bg-white hover:text-slate-600'
+          : 'bg-slate-50 text-slate-700 border-2 border-slate-200 hover:border-indigo-300 hover:bg-white hover:text-slate-900'
       }`}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}

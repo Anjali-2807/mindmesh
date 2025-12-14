@@ -172,7 +172,7 @@ export default function DecisionsView() {
         <h1 className="text-4xl sm:text-5xl font-extrabold bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 bg-clip-text text-transparent tracking-tight">
           Strategic Decisions
         </h1>
-        <p className="text-slate-600 text-lg mt-3 font-medium">
+        <p className="text-slate-200 text-lg mt-3 font-medium">
           Context-seeking AI that asks the right questions before advising
         </p>
       </motion.div>
@@ -260,7 +260,7 @@ function InitialForm({ form, setForm, onAnalyze, isAnalyzing }) {
               <div className="w-full border-t border-slate-200"></div>
             </div>
             <div className="relative flex justify-center text-xs">
-              <span className="px-3 bg-white text-slate-500 uppercase tracking-wide font-semibold">
+              <span className="px-3 bg-white text-slate-700 uppercase tracking-wide font-semibold">
                 Quick Assessment (Optional)
               </span>
             </div>
@@ -353,12 +353,12 @@ function ContextGathering({ questions, answers, currentAnswer, setCurrentAnswer,
       {/* Conversation History */}
       {conversationHistory.length > 0 && (
         <Card>
-          <h3 className="text-sm font-bold text-slate-700 uppercase tracking-wide mb-4">Context Gathered</h3>
+          <h3 className="text-sm font-bold text-slate-200 uppercase tracking-wide mb-4">Context Gathered</h3>
           <div className="space-y-3">
             {conversationHistory.map((exchange, idx) => (
               <div key={idx} className="bg-slate-50 rounded-lg p-3 border border-slate-200">
-                <p className="text-sm font-semibold text-slate-700 mb-1">Q: {exchange.question}</p>
-                <p className="text-sm text-slate-600">A: {exchange.answer}</p>
+                <p className="text-sm font-semibold text-slate-200 mb-1">Q: {exchange.question}</p>
+                <p className="text-sm text-slate-200">A: {exchange.answer}</p>
               </div>
             ))}
           </div>
@@ -374,13 +374,13 @@ function ContextGathering({ questions, answers, currentAnswer, setCurrentAnswer,
                 <MessageCircle className="text-white" size={24} />
               </div>
               <div className="flex-1">
-                <h3 className="text-lg font-bold text-slate-900 mb-2">
+                <h3 className="text-lg font-bold text-white mb-2">
                   Let me understand better...
                 </h3>
-                <p className="text-slate-700 leading-relaxed">
+                <p className="text-slate-200 leading-relaxed">
                   {currentQuestion.question}
                 </p>
-                <div className="mt-1 text-xs text-slate-500">
+                <div className="mt-1 text-xs text-slate-300">
                   Question {Object.keys(answers).length + 1} of {questions.length}
                 </div>
               </div>
@@ -436,7 +436,7 @@ function AnalyzingState() {
     >
       <Card className="text-center py-16">
         <Loading size="xl" text="Analyzing your decision with full context..." />
-        <p className="text-sm text-slate-500 mt-6 max-w-md mx-auto">
+        <p className="text-sm text-slate-300 mt-6 max-w-md mx-auto">
           Considering your capacity, situation details, and all provided context to generate reasoned recommendations...
         </p>
       </Card>
@@ -476,13 +476,13 @@ function AnalysisResults({ analysis, conversationHistory, onReset }) {
           <div className="mb-4">
             {getVerdictIcon(analysis.verdict)}
           </div>
-          <h3 className="text-xs text-slate-500 uppercase tracking-widest font-bold mb-2">
+          <h3 className="text-xs text-slate-300 uppercase tracking-widest font-bold mb-2">
             Recommended Verdict
           </h3>
           <h2 className={`text-5xl font-extrabold mb-4 ${getVerdictColor(analysis.verdict)}`}>
             {analysis.verdict}
           </h2>
-          <p className="text-slate-600 max-w-md mx-auto mb-8">
+          <p className="text-slate-200 max-w-md mx-auto mb-8">
             {analysis.verdict_detail}
           </p>
 
@@ -515,20 +515,20 @@ function AnalysisResults({ analysis, conversationHistory, onReset }) {
       {/* Reasoning */}
       {analysis.reasoning && (
         <Card>
-          <h3 className="font-bold text-slate-900 mb-4 text-lg">Detailed Reasoning</h3>
+          <h3 className="font-bold text-white mb-4 text-lg">Detailed Reasoning</h3>
           
           {/* Summary */}
           <div className="bg-indigo-50 rounded-lg p-4 mb-6 border-l-4 border-indigo-600">
-            <p className="text-slate-700 leading-relaxed">{analysis.reasoning.summary}</p>
+            <p className="text-slate-200 leading-relaxed">{analysis.reasoning.summary}</p>
           </div>
 
           {/* Key Points */}
           {analysis.reasoning.key_points?.length > 0 && (
             <div className="mb-6">
-              <h4 className="font-semibold text-slate-800 mb-3">Key Points</h4>
+              <h4 className="font-semibold text-white mb-3">Key Points</h4>
               <ul className="space-y-2">
                 {analysis.reasoning.key_points.map((point, idx) => (
-                  <li key={idx} className="flex items-start gap-3 text-sm text-slate-700">
+                  <li key={idx} className="flex items-start gap-3 text-sm text-slate-200">
                     <div className="w-2 h-2 bg-indigo-600 rounded-full mt-1.5 flex-shrink-0"></div>
                     <span>{point}</span>
                   </li>
@@ -545,7 +545,7 @@ function AnalysisResults({ analysis, conversationHistory, onReset }) {
               </h4>
               <ul className="space-y-2">
                 {analysis.reasoning.opportunities.map((opp, idx) => (
-                  <li key={idx} className="text-sm text-slate-700 bg-green-50 rounded-lg p-3 border border-green-200">
+                  <li key={idx} className="text-sm text-slate-200 bg-green-50 rounded-lg p-3 border border-green-200">
                     {opp}
                   </li>
                 ))}
@@ -561,7 +561,7 @@ function AnalysisResults({ analysis, conversationHistory, onReset }) {
               </h4>
               <ul className="space-y-2">
                 {analysis.reasoning.risks.map((risk, idx) => (
-                  <li key={idx} className="text-sm text-slate-700 bg-amber-50 rounded-lg p-3 border border-amber-200">
+                  <li key={idx} className="text-sm text-slate-200 bg-amber-50 rounded-lg p-3 border border-amber-200">
                     {risk}
                   </li>
                 ))}
@@ -581,7 +581,7 @@ function AnalysisResults({ analysis, conversationHistory, onReset }) {
 
       {/* Context Card */}
       <Card className="bg-blue-50/50 border-blue-200">
-        <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2">
+        <h3 className="font-bold text-white mb-4 flex items-center gap-2">
           <TrendingUp size={20} className="text-blue-600" />
           Your Current Context (Last 7 Days)
         </h3>
@@ -590,7 +590,7 @@ function AnalysisResults({ analysis, conversationHistory, onReset }) {
           <ContextMetric label="Avg Energy" value={analysis.context?.avg_energy} max={5} />
           <ContextMetric label="Avg Stress" value={analysis.context?.avg_stress} max={5} inverted />
         </div>
-        <p className="text-sm text-slate-600 mt-4 p-4 bg-white rounded-lg border border-blue-100">
+        <p className="text-sm text-slate-200 mt-4 p-4 bg-white rounded-lg border border-blue-100">
           <strong>Analysis:</strong> {analysis.capacity_message}
         </p>
       </Card>
@@ -608,9 +608,9 @@ function AnalysisResults({ analysis, conversationHistory, onReset }) {
 function MetricBox({ label, value, subtitle }) {
   return (
     <div className="bg-white p-4 rounded-xl border border-slate-200">
-      <p className="text-xs text-slate-500 font-semibold uppercase mb-1">{label}</p>
-      <p className="text-2xl font-bold text-slate-900 mb-1">{value}</p>
-      <p className="text-xs text-slate-600">{subtitle}</p>
+      <p className="text-xs text-slate-300 font-semibold uppercase mb-1">{label}</p>
+      <p className="text-2xl font-bold text-white mb-1">{value}</p>
+      <p className="text-xs text-slate-200">{subtitle}</p>
     </div>
   );
 }
@@ -623,10 +623,10 @@ function ContextMetric({ label, value, max, inverted = false }) {
 
   return (
     <div className="bg-white p-4 rounded-lg border border-blue-100">
-      <p className="text-xs text-slate-600 font-semibold mb-2">{label}</p>
+      <p className="text-xs text-slate-200 font-semibold mb-2">{label}</p>
       <div className="flex items-end gap-2">
-        <span className="text-2xl font-bold text-slate-900">{value?.toFixed(1)}</span>
-        <span className="text-sm text-slate-500">/ {max}</span>
+        <span className="text-2xl font-bold text-white">{value?.toFixed(1)}</span>
+        <span className="text-sm text-slate-300">/ {max}</span>
       </div>
       <div className="w-full bg-slate-200 rounded-full h-2 mt-2">
         <div className={`${color} h-2 rounded-full transition-all duration-500`} style={{ width: `${percentage}%` }}></div>
@@ -641,7 +641,7 @@ function getVerdictIcon(verdict) {
     'Proceed with Caution': <AlertCircle size={64} className="text-yellow-600 mx-auto" />,
     'Hold Off': <XCircle size={64} className="text-red-600 mx-auto" />
   };
-  return icons[verdict] || <Brain size={64} className="text-slate-600 mx-auto" />;
+  return icons[verdict] || <Brain size={64} className="text-slate-200 mx-auto" />;
 }
 
 function getVerdictColor(verdict) {
@@ -650,5 +650,5 @@ function getVerdictColor(verdict) {
     'Proceed with Caution': 'text-yellow-600',
     'Hold Off': 'text-red-600'
   };
-  return colors[verdict] || 'text-slate-600';
+  return colors[verdict] || 'text-slate-200';
 }

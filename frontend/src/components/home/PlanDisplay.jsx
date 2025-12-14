@@ -49,21 +49,21 @@ export default function PlanDisplay({ result, onReset, setView }) {
               <Globe className="text-white" size={20} />
             </div>
             <div>
-              <h4 className="font-bold text-slate-900">Context Detected</h4>
-              <p className="text-xs text-slate-600">AI analyzed your situation</p>
+              <h4 className="font-bold text-white">Context Detected</h4>
+              <p className="text-xs text-slate-200">AI analyzed your situation</p>
             </div>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
             <div className="bg-white p-3 rounded-lg">
-              <p className="text-xs text-slate-500 font-semibold uppercase">Category</p>
-              <p className="font-bold text-slate-900">{context.category}</p>
+              <p className="text-xs text-slate-300 font-semibold uppercase">Category</p>
+              <p className="font-bold text-white">{context.category}</p>
             </div>
             <div className="bg-white p-3 rounded-lg">
-              <p className="text-xs text-slate-500 font-semibold uppercase">Confidence</p>
-              <p className="font-bold text-slate-900">{Math.round(context.confidence * 100)}%</p>
+              <p className="text-xs text-slate-300 font-semibold uppercase">Confidence</p>
+              <p className="font-bold text-white">{Math.round(context.confidence * 100)}%</p>
             </div>
             <div className="bg-white p-3 rounded-lg">
-              <p className="text-xs text-slate-500 font-semibold uppercase">Urgency</p>
+              <p className="text-xs text-slate-300 font-semibold uppercase">Urgency</p>
               <p className={`font-bold capitalize ${
                 context.urgency === 'critical' ? 'text-red-600' :
                 context.urgency === 'high' ? 'text-orange-600' :
@@ -72,8 +72,8 @@ export default function PlanDisplay({ result, onReset, setView }) {
               }`}>{context.urgency}</p>
             </div>
             <div className="bg-white p-3 rounded-lg">
-              <p className="text-xs text-slate-500 font-semibold uppercase">Keywords</p>
-              <p className="font-bold text-slate-900 text-xs truncate">{context.keywords?.join(', ') || 'N/A'}</p>
+              <p className="text-xs text-slate-300 font-semibold uppercase">Keywords</p>
+              <p className="font-bold text-white text-xs truncate">{context.keywords?.join(', ') || 'N/A'}</p>
             </div>
           </div>
         </Card>
@@ -117,11 +117,11 @@ export default function PlanDisplay({ result, onReset, setView }) {
                 rel="noopener noreferrer"
                 className="block bg-white p-4 rounded-lg border border-purple-100 hover:shadow-md transition-all group"
               >
-                <h4 className="font-bold text-slate-800 text-sm mb-1 flex items-center gap-2 group-hover:text-purple-600 transition-colors">
+                <h4 className="font-bold text-white text-sm mb-1 flex items-center gap-2 group-hover:text-purple-600 transition-colors">
                   {insight.title}
                   <ExternalLink size={12} className="opacity-30 group-hover:opacity-100" />
                 </h4>
-                <p className="text-slate-600 text-xs leading-relaxed mb-2">{insight.description}</p>
+                <p className="text-slate-200 text-xs leading-relaxed mb-2">{insight.description}</p>
                 {insight.solution && (
                   <p className="text-purple-700 text-xs font-medium">{insight.solution}</p>
                 )}
@@ -141,8 +141,8 @@ export default function PlanDisplay({ result, onReset, setView }) {
           <div className="grid gap-3">
             {resources.map((resource, idx) => (
               <div key={idx} className="bg-white p-4 rounded-lg border border-green-100">
-                <h4 className="font-bold text-slate-800 text-sm">{resource.name}</h4>
-                <p className="text-slate-600 text-xs mt-1">
+                <h4 className="font-bold text-white text-sm">{resource.name}</h4>
+                <p className="text-slate-200 text-xs mt-1">
                   {resource.contact && `Contact: ${resource.contact}`}
                   {resource.url && <a href={resource.url} target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">Visit Website</a>}
                 </p>
@@ -187,7 +187,7 @@ function ActionCard({ icon: Icon, title, content, color }) {
         <Icon size={16} />
         <span className="font-bold text-xs uppercase tracking-wider">{title}</span>
       </div>
-      <p className="text-sm text-slate-700 leading-relaxed">{content}</p>
+      <p className="text-sm text-slate-200 leading-relaxed">{content}</p>
     </Card>
   );
 }

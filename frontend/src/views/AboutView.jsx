@@ -111,17 +111,17 @@ export default function AboutView() {
           <Brain size={32} />
           <h1 className="text-3xl font-extrabold">MindMesh</h1>
         </div>
-        <p className="text-2xl text-slate-700 font-bold mb-4">
+        <p className="text-2xl text-slate-200 font-bold mb-4">
           AI-Powered Decision Intelligence System
         </p>
-        <p className="text-lg text-slate-600 max-w-3xl mx-auto leading-relaxed">
+        <p className="text-lg text-slate-200 max-w-3xl mx-auto leading-relaxed">
           A context-seeking, reasoning-first platform that helps you make better decisions by understanding your situation deeply, tracking your wellness patterns, and providing personalized, capacity-aware recommendations.
         </p>
       </motion.div>
 
       {/* What Makes MindMesh Different */}
       <div>
-        <h2 className="text-3xl font-extrabold text-slate-900 mb-6">What Makes MindMesh Different?</h2>
+        <h2 className="text-3xl font-extrabold text-white mb-6">What Makes MindMesh Different?</h2>
         <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-indigo-200">
           <div className="space-y-6">
             <div className="flex items-start gap-4">
@@ -129,23 +129,23 @@ export default function AboutView() {
                 <MessageCircle className="text-white" size={24} />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-slate-900 mb-2">Context-Seeking Intelligence</h3>
-                <p className="text-slate-700 leading-relaxed mb-4">
+                <h3 className="text-xl font-bold text-white mb-2">Context-Seeking Intelligence</h3>
+                <p className="text-slate-200 leading-relaxed mb-4">
                   Unlike typical chatbots that give instant generic advice, MindMesh <strong>refuses to make recommendations without sufficient context</strong>.
                 </p>
                 <div className="bg-white/60 rounded-lg p-4 space-y-3">
                   <div className="flex items-start gap-3">
                     <span className="text-red-600 font-bold">❌</span>
                     <div>
-                      <p className="font-semibold text-slate-900">Generic Systems:</p>
-                      <p className="text-sm text-slate-600">"Should I go to the party?" → "Yes, social connections are important!"</p>
+                      <p className="font-semibold text-white">Generic Systems:</p>
+                      <p className="text-sm text-slate-200">"Should I go to the party?" → "Yes, social connections are important!"</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-3">
                     <span className="text-green-600 font-bold">✅</span>
                     <div>
-                      <p className="font-semibold text-slate-900">MindMesh:</p>
-                      <p className="text-sm text-slate-600">"Should I go to the party?" → "Let me understand better: When is it? How are you feeling today? Do you have work tomorrow? What are your concerns about going or not going?"</p>
+                      <p className="font-semibold text-white">MindMesh:</p>
+                      <p className="text-sm text-slate-200">"Should I go to the party?" → "Let me understand better: When is it? How are you feeling today? Do you have work tomorrow? What are your concerns about going or not going?"</p>
                     </div>
                   </div>
                 </div>
@@ -157,7 +157,7 @@ export default function AboutView() {
 
       {/* Features Grid */}
       <div>
-        <h2 className="text-3xl font-extrabold text-slate-900 mb-6">Core Features</h2>
+        <h2 className="text-3xl font-extrabold text-white mb-6">Core Features</h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature, index) => (
             <FeatureCard key={index} feature={feature} index={index} />
@@ -167,7 +167,7 @@ export default function AboutView() {
 
       {/* How It Works */}
       <div>
-        <h2 className="text-3xl font-extrabold text-slate-900 mb-6">How MindMesh Works</h2>
+        <h2 className="text-3xl font-extrabold text-white mb-6">How MindMesh Works</h2>
         <div className="space-y-4">
           {howItWorks.map((step, index) => (
             <HowItWorksCard key={index} step={step} />
@@ -177,7 +177,7 @@ export default function AboutView() {
 
       {/* Core Principles */}
       <div>
-        <h2 className="text-3xl font-extrabold text-slate-900 mb-6">Core Principles</h2>
+        <h2 className="text-3xl font-extrabold text-white mb-6">Core Principles</h2>
         <Card>
           <div className="grid md:grid-cols-2 gap-6">
             {principles.map((principle, index) => (
@@ -189,26 +189,26 @@ export default function AboutView() {
 
       {/* Use Cases */}
       <div>
-        <h2 className="text-3xl font-extrabold text-slate-900 mb-6">Who Is MindMesh For?</h2>
+        <h2 className="text-3xl font-extrabold text-white mb-6">Who Is MindMesh For?</h2>
         <div className="grid md:grid-cols-3 gap-6">
           <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
             <div className="text-4xl mb-4">🎓</div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">Students</h3>
-            <p className="text-slate-700 text-sm">
+            <h3 className="text-xl font-bold text-white mb-2">Students</h3>
+            <p className="text-slate-200 text-sm">
               Manage exam stress, optimize study schedules, and make career decisions with capacity awareness.
             </p>
           </Card>
           <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200">
             <div className="text-4xl mb-4">💼</div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">Professionals</h3>
-            <p className="text-slate-700 text-sm">
+            <h3 className="text-xl font-bold text-white mb-2">Professionals</h3>
+            <p className="text-slate-200 text-sm">
               Navigate work decisions, prevent burnout, and maintain work-life balance with data-driven insights.
             </p>
           </Card>
           <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
             <div className="text-4xl mb-4">🧘</div>
-            <h3 className="text-xl font-bold text-slate-900 mb-2">Anyone Seeking Clarity</h3>
-            <p className="text-slate-700 text-sm">
+            <h3 className="text-xl font-bold text-white mb-2">Anyone Seeking Clarity</h3>
+            <p className="text-slate-200 text-sm">
               Make better life decisions through systematic analysis and personalized recommendations.
             </p>
           </Card>
@@ -217,7 +217,7 @@ export default function AboutView() {
 
       {/* Technology */}
       <div>
-        <h2 className="text-3xl font-extrabold text-slate-900 mb-6">Powered By Advanced AI</h2>
+        <h2 className="text-3xl font-extrabold text-white mb-6">Powered By Advanced AI</h2>
         <Card className="bg-gradient-to-br from-slate-900 to-indigo-900 text-white">
           <div className="grid md:grid-cols-2 gap-8">
             <div>
@@ -305,8 +305,8 @@ function FeatureCard({ feature, index }) {
         <div className={`w-12 h-12 ${iconColors[feature.color]} rounded-lg flex items-center justify-center mb-4`}>
           <Icon className="text-white" size={24} />
         </div>
-        <h3 className="text-xl font-bold text-slate-900 mb-2">{feature.title}</h3>
-        <p className="text-slate-700 text-sm leading-relaxed">{feature.description}</p>
+        <h3 className="text-xl font-bold text-white mb-2">{feature.title}</h3>
+        <p className="text-slate-200 text-sm leading-relaxed">{feature.description}</p>
       </Card>
     </motion.div>
   );
@@ -329,9 +329,9 @@ function HowItWorksCard({ step }) {
           <div className="flex-1">
             <div className="flex items-center gap-3 mb-2">
               <span className="text-2xl">{step.icon}</span>
-              <h3 className="text-xl font-bold text-slate-900">{step.title}</h3>
+              <h3 className="text-xl font-bold text-white">{step.title}</h3>
             </div>
-            <p className="text-slate-600 leading-relaxed">{step.description}</p>
+            <p className="text-slate-200 leading-relaxed">{step.description}</p>
           </div>
         </div>
       </Card>
@@ -346,8 +346,8 @@ function PrincipleCard({ principle }) {
     <div className="flex items-start gap-3">
       <Icon className="text-green-600 flex-shrink-0 mt-1" size={20} />
       <div>
-        <h4 className="font-bold text-slate-900 mb-1">{principle.title}</h4>
-        <p className="text-sm text-slate-600">{principle.principle}</p>
+        <h4 className="font-bold text-white mb-1">{principle.title}</h4>
+        <p className="text-sm text-slate-200">{principle.principle}</p>
       </div>
     </div>
   );
