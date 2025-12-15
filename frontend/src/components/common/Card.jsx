@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 
-export default function Card({ children, className = '', hover = true, glow = false, ...props }) {
+export default function Card({ children, className = '', hover = true, glow = false, glass = true, ...props }) {
   const Component = hover ? motion.div : 'div';
   
   const hoverProps = hover ? {
@@ -16,7 +16,7 @@ export default function Card({ children, className = '', hover = true, glow = fa
     transition: { duration: 0.4, ease: [0.16, 1, 0.3, 1] }
   } : {};
 
-  const glowClass = glow ? 'glass-glow' : 'glass';
+  const glowClass = glass ? (glow ? 'glass-glow' : 'glass') : '';
 
   return (
     <Component

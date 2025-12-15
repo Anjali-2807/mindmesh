@@ -4,11 +4,36 @@ import json
 
 db = SQLAlchemy()
 
+class User(db.Model):
+    """Model for user accounts"""
+    __tablename__ = 'users'
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(200), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    # Relationships
+    logs = db.relationship('DailyLog', backref='user', lazy=True)
+    decisions = db.relationship('Decision', backref='user', lazy=True)
+    patterns = db.relationship('Pattern', backref='user', lazy=True)
+    insights = db.relationship('Insight', backref='user', lazy=True)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'email': self.email,
+            'created_at': self.created_at.isoformat()
+        }
+
 class DailyLog(db.Model):
     """Model for daily mood/energy logs"""
     __tablename__ = 'daily_logs'
     
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True) # made nullable for migration
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
     
     # Metrics
@@ -60,6 +85,7 @@ class Decision(db.Model):
     __tablename__ = 'decisions'
     
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     timestamp = db.Column(db.DateTime, default=datetime.utcnow, nullable=False, index=True)
     
     # Decision Details
@@ -126,6 +152,7 @@ class Pattern(db.Model):
     __tablename__ = 'patterns'
     
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     detected_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     
     pattern_type = db.Column(db.String(100), nullable=False)  # 'energy_dip', 'stress_spike', etc.
@@ -160,6 +187,7 @@ class Insight(db.Model):
     __tablename__ = 'insights'
     
     id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=True)
     generated_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     
     insight_type = db.Column(db.String(100), nullable=False)  # 'trend', 'anomaly', 'achievement', 'warning'

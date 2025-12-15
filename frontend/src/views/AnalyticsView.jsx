@@ -225,30 +225,30 @@ export default function AnalyticsView() {
       {activeTab === 'forecast' && (
         <div className="space-y-8">
           {/* Forecast Summary */}
-          <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200">
-            <h3 className="font-bold text-purple-900 mb-4 text-xl flex items-center gap-2">
-              <TrendingUp size={24} />
+          <Card className="bg-gradient-to-br from-purple-900/20 to-pink-900/20 border-2 border-purple-500/30">
+            <h3 className="font-bold text-white mb-4 text-xl flex items-center gap-2">
+              <TrendingUp size={24} className="text-purple-400" />
               7-Day Forecast
             </h3>
-            <p className="text-purple-700 mb-6">
+            <p className="text-purple-200 mb-6">
               Based on your recent patterns, here's what we predict for the next week:
             </p>
             
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {forecastData.map(item => (
-                <div key={item.metric} className="bg-white rounded-xl p-4 border-2 border-purple-100">
-                  <div className="text-sm font-semibold text-purple-700 mb-2">{item.metric}</div>
+                <div key={item.metric} className="bg-white/5 rounded-xl p-4 border-2 border-purple-500/20">
+                  <div className="text-sm font-semibold text-purple-300 mb-2">{item.metric}</div>
                   <div className="flex items-baseline gap-2">
-                    <span className="text-2xl font-bold text-slate-900">{item.current.toFixed(1)}</span>
-                    <span className="text-slate-600">→</span>
-                    <span className="text-2xl font-bold text-purple-600">{item.predicted.toFixed(1)}</span>
+                    <span className="text-2xl font-bold text-white">{item.current.toFixed(1)}</span>
+                    <span className="text-slate-500">→</span>
+                    <span className="text-2xl font-bold text-purple-400">{item.predicted.toFixed(1)}</span>
                   </div>
                   <div className="mt-2 flex items-center gap-1 text-xs">
-                    {item.trend === 'improving' && <TrendingUp size={14} className="text-green-600" />}
-                    {item.trend === 'declining' && <TrendingDown size={14} className="text-red-600" />}
+                    {item.trend === 'improving' && <TrendingUp size={14} className="text-green-400" />}
+                    {item.trend === 'declining' && <TrendingDown size={14} className="text-red-400" />}
                     {item.trend === 'stable' && <Minus size={14} className="text-slate-500" />}
-                    <span className="capitalize text-slate-700">{item.trend}</span>
-                    <span className="ml-auto text-slate-600">({item.confidence})</span>
+                    <span className="capitalize text-slate-300">{item.trend}</span>
+                    <span className="ml-auto text-slate-500">({item.confidence})</span>
                   </div>
                 </div>
               ))}
@@ -257,34 +257,35 @@ export default function AnalyticsView() {
 
           {/* Anomalies */}
           {advancedAnalytics.anomalies && advancedAnalytics.anomalies.length > 0 && (
-            <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-200">
-              <h3 className="font-bold text-amber-900 mb-4 text-xl flex items-center gap-2">
+
+            <Card className="bg-gradient-to-br from-amber-900/20 to-orange-900/20 border-2 border-amber-500/30">
+              <h3 className="font-bold text-amber-200 mb-4 text-xl flex items-center gap-2">
                 <AlertTriangle size={24} />
                 Detected Anomalies
               </h3>
               <div className="space-y-3">
                 {advancedAnalytics.anomalies.map((anomaly, idx) => (
-                  <div key={idx} className="bg-white rounded-lg p-4 border border-amber-200">
+                  <div key={idx} className="bg-white/5 rounded-lg p-4 border border-amber-500/20">
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                          <span className="capitalize font-bold text-slate-900">{anomaly.metric}</span>
+                          <span className="capitalize font-bold text-white">{anomaly.metric}</span>
                           <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
-                            anomaly.type === 'spike' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700'
+                            anomaly.type === 'spike' ? 'bg-red-500/20 text-red-300' : 'bg-blue-500/20 text-blue-300'
                           }`}>
                             {anomaly.type}
                           </span>
                           <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
-                            anomaly.severity === 'high' ? 'bg-orange-100 text-orange-700' : 'bg-yellow-100 text-yellow-700'
+                            anomaly.severity === 'high' ? 'bg-orange-500/20 text-orange-300' : 'bg-yellow-500/20 text-yellow-300'
                           }`}>
                             {anomaly.severity}
                           </span>
                         </div>
-                        <p className="text-sm text-slate-700">{anomaly.message}</p>
+                        <p className="text-sm text-slate-300">{anomaly.message}</p>
                       </div>
                       <div className="text-right flex-shrink-0">
-                        <div className="text-xl font-bold text-slate-900">{anomaly.value}</div>
-                        <div className="text-xs text-slate-600">{anomaly.expected_range}</div>
+                        <div className="text-xl font-bold text-white">{anomaly.value}</div>
+                        <div className="text-xs text-slate-500">{anomaly.expected_range}</div>
                       </div>
                     </div>
                   </div>
@@ -299,34 +300,35 @@ export default function AnalyticsView() {
         <div className="space-y-8">
           {/* Cycles */}
           {advancedAnalytics.cycles && advancedAnalytics.cycles.status === 'success' && advancedAnalytics.cycles.cycles.length > 0 && (
-            <Card className="bg-gradient-to-br from-cyan-50 to-blue-50 border-2 border-cyan-200">
-              <h3 className="font-bold text-cyan-900 mb-4 text-xl flex items-center gap-2">
-                <Calendar size={24} />
+
+            <Card className="bg-gradient-to-br from-cyan-900/20 to-blue-900/20 border-2 border-cyan-500/30">
+              <h3 className="font-bold text-white mb-4 text-xl flex items-center gap-2">
+                <Calendar size={24} className="text-cyan-400" />
                 Detected Cycles
               </h3>
               <div className="space-y-4">
                 {advancedAnalytics.cycles.cycles.map((cycle, idx) => (
-                  <div key={idx} className="bg-white rounded-lg p-5 border border-cyan-200">
+                  <div key={idx} className="bg-white/5 rounded-lg p-5 border border-cyan-500/20">
                     <div className="flex items-start justify-between gap-3 mb-3">
                       <div>
                         <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
-                          cycle.type === 'weekly' ? 'bg-cyan-100 text-cyan-700' : 'bg-purple-100 text-purple-700'
+                          cycle.type === 'weekly' ? 'bg-cyan-500/20 text-cyan-300' : 'bg-purple-500/20 text-purple-300'
                         }`}>
                           {cycle.type} pattern
                         </span>
-                        <h4 className="font-bold text-slate-900 mt-2 capitalize">{cycle.metric}</h4>
+                        <h4 className="font-bold text-white mt-2 capitalize">{cycle.metric}</h4>
                       </div>
                     </div>
-                    <p className="text-slate-700 mb-3">{cycle.message}</p>
+                    <p className="text-slate-300 mb-3">{cycle.message}</p>
                     {cycle.weekday_avg && cycle.weekend_avg && (
                       <div className="flex gap-4 text-sm">
-                        <div className="flex-1 bg-slate-50 rounded-lg p-3">
-                          <div className="text-slate-700 font-semibold mb-1">Weekday Avg</div>
-                          <div className="text-2xl font-bold text-slate-900">{cycle.weekday_avg}</div>
+                        <div className="flex-1 bg-white/5 rounded-lg p-3">
+                          <div className="text-slate-400 font-semibold mb-1">Weekday Avg</div>
+                          <div className="text-2xl font-bold text-white">{cycle.weekday_avg}</div>
                         </div>
-                        <div className="flex-1 bg-cyan-50 rounded-lg p-3">
-                          <div className="text-cyan-700 font-semibold mb-1">Weekend Avg</div>
-                          <div className="text-2xl font-bold text-cyan-600">{cycle.weekend_avg}</div>
+                        <div className="flex-1 bg-cyan-500/10 rounded-lg p-3">
+                          <div className="text-cyan-400 font-semibold mb-1">Weekend Avg</div>
+                          <div className="text-2xl font-bold text-cyan-300">{cycle.weekend_avg}</div>
                         </div>
                       </div>
                     )}
@@ -338,9 +340,10 @@ export default function AnalyticsView() {
 
           {/* Weekly Summary */}
           {advancedAnalytics.weekly_summary && advancedAnalytics.weekly_summary.status === 'success' && (
-            <Card className="bg-gradient-to-br from-indigo-50 to-purple-50 border-2 border-indigo-200">
-              <h3 className="font-bold text-indigo-900 mb-4 text-xl">Weekly Summary</h3>
-              <p className="text-lg text-indigo-800 leading-relaxed mb-6">
+
+            <Card className="bg-gradient-to-br from-indigo-900/20 to-purple-900/20 border-2 border-indigo-500/30">
+              <h3 className="font-bold text-indigo-300 mb-4 text-xl">Weekly Summary</h3>
+              <p className="text-lg text-indigo-200 leading-relaxed mb-6">
                 {advancedAnalytics.weekly_summary.summary}
               </p>
 
@@ -348,12 +351,12 @@ export default function AnalyticsView() {
                 {/* Highlights */}
                 {advancedAnalytics.weekly_summary.highlights.length > 0 && (
                   <div>
-                    <h4 className="font-bold text-green-900 mb-3 flex items-center gap-2">
+                    <h4 className="font-bold text-green-400 mb-3 flex items-center gap-2">
                       <span>✨</span> Highlights
                     </h4>
                     <ul className="space-y-2">
                       {advancedAnalytics.weekly_summary.highlights.map((highlight, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-sm text-green-800 bg-green-50 rounded-lg p-3">
+                        <li key={idx} className="flex items-start gap-2 text-sm text-green-200 bg-green-500/10 rounded-lg p-3">
                           <span>✓</span>
                           <span>{highlight}</span>
                         </li>
@@ -365,12 +368,12 @@ export default function AnalyticsView() {
                 {/* Lowlights */}
                 {advancedAnalytics.weekly_summary.lowlights.length > 0 && (
                   <div>
-                    <h4 className="font-bold text-amber-900 mb-3 flex items-center gap-2">
+                    <h4 className="font-bold text-amber-400 mb-3 flex items-center gap-2">
                       <span>⚠️</span> Areas for Improvement
                     </h4>
                     <ul className="space-y-2">
                       {advancedAnalytics.weekly_summary.lowlights.map((lowlight, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-sm text-amber-800 bg-amber-50 rounded-lg p-3">
+                        <li key={idx} className="flex items-start gap-2 text-sm text-amber-200 bg-amber-500/10 rounded-lg p-3">
                           <span>→</span>
                           <span>{lowlight}</span>
                         </li>
@@ -382,14 +385,14 @@ export default function AnalyticsView() {
 
               {/* Achievements */}
               {advancedAnalytics.weekly_summary.achievements.length > 0 && (
-                <div className="mt-6 pt-6 border-t border-indigo-200">
-                  <h4 className="font-bold text-indigo-900 mb-4">🏆 Achievements Unlocked</h4>
+                <div className="mt-6 pt-6 border-t border-indigo-500/30">
+                  <h4 className="font-bold text-indigo-300 mb-4">🏆 Achievements Unlocked</h4>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {advancedAnalytics.weekly_summary.achievements.map((achievement, idx) => (
-                      <div key={idx} className="bg-white rounded-xl p-4 text-center border-2 border-indigo-100">
+                      <div key={idx} className="bg-white/5 rounded-xl p-4 text-center border-2 border-indigo-500/20">
                         <div className="text-3xl mb-2">{achievement.icon}</div>
-                        <div className="font-bold text-slate-900 text-sm">{achievement.title}</div>
-                        <div className="text-xs text-slate-600 mt-1">{achievement.description}</div>
+                        <div className="font-bold text-white text-sm">{achievement.title}</div>
+                        <div className="text-xs text-slate-400 mt-1">{achievement.description}</div>
                       </div>
                     ))}
                   </div>
@@ -419,7 +422,7 @@ function TimeRangeSelector({ value, onChange }) {
           className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all button-press ${
             value === option.value
               ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg'
-              : 'bg-white text-slate-700 border-2 border-slate-200 hover:border-indigo-300'
+              : 'bg-white/5 text-slate-300 border-2 border-slate-700/50 hover:border-indigo-400 hover:bg-white/10'
           }`}
         >
           {option.label}

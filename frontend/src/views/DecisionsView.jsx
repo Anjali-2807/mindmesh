@@ -467,7 +467,7 @@ function AnalysisResults({ analysis, conversationHistory, onReset }) {
       )}
 
       {/* Verdict Card */}
-      <Card className="text-center py-12 bg-gradient-to-br from-slate-50 to-purple-50 border-2 border-purple-200">
+      <Card className="text-center py-12 bg-gradient-to-br from-slate-900/50 to-purple-900/20 border-2 border-purple-500/30">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -518,7 +518,7 @@ function AnalysisResults({ analysis, conversationHistory, onReset }) {
           <h3 className="font-bold text-white mb-4 text-lg">Detailed Reasoning</h3>
           
           {/* Summary */}
-          <div className="bg-indigo-50 rounded-lg p-4 mb-6 border-l-4 border-indigo-600">
+          <div className="bg-indigo-500/10 rounded-lg p-4 mb-6 border-l-4 border-indigo-500">
             <p className="text-slate-200 leading-relaxed">{analysis.reasoning.summary}</p>
           </div>
 
@@ -545,7 +545,7 @@ function AnalysisResults({ analysis, conversationHistory, onReset }) {
               </h4>
               <ul className="space-y-2">
                 {analysis.reasoning.opportunities.map((opp, idx) => (
-                  <li key={idx} className="text-sm text-slate-200 bg-green-50 rounded-lg p-3 border border-green-200">
+                  <li key={idx} className="text-sm text-slate-200 bg-emerald-500/10 rounded-lg p-3 border border-emerald-500/20">
                     {opp}
                   </li>
                 ))}
@@ -561,7 +561,7 @@ function AnalysisResults({ analysis, conversationHistory, onReset }) {
               </h4>
               <ul className="space-y-2">
                 {analysis.reasoning.risks.map((risk, idx) => (
-                  <li key={idx} className="text-sm text-slate-200 bg-amber-50 rounded-lg p-3 border border-amber-200">
+                  <li key={idx} className="text-sm text-slate-200 bg-amber-500/10 rounded-lg p-3 border border-amber-500/20">
                     {risk}
                   </li>
                 ))}
@@ -580,9 +580,9 @@ function AnalysisResults({ analysis, conversationHistory, onReset }) {
       )}
 
       {/* Context Card */}
-      <Card className="bg-blue-50/50 border-blue-200">
+      <Card className="bg-blue-900/10 border-blue-500/30">
         <h3 className="font-bold text-white mb-4 flex items-center gap-2">
-          <TrendingUp size={20} className="text-blue-600" />
+          <TrendingUp size={20} className="text-blue-400" />
           Your Current Context (Last 7 Days)
         </h3>
         <div className="grid grid-cols-3 gap-4">
@@ -590,7 +590,7 @@ function AnalysisResults({ analysis, conversationHistory, onReset }) {
           <ContextMetric label="Avg Energy" value={analysis.context?.avg_energy} max={5} />
           <ContextMetric label="Avg Stress" value={analysis.context?.avg_stress} max={5} inverted />
         </div>
-        <p className="text-sm text-slate-200 mt-4 p-4 bg-white rounded-lg border border-blue-100">
+        <p className="text-sm text-slate-200 mt-4 p-4 bg-white/5 rounded-lg border border-blue-500/20">
           <strong>Analysis:</strong> {analysis.capacity_message}
         </p>
       </Card>
@@ -607,10 +607,10 @@ function AnalysisResults({ analysis, conversationHistory, onReset }) {
 // Helper Components
 function MetricBox({ label, value, subtitle }) {
   return (
-    <div className="bg-white p-4 rounded-xl border border-slate-200">
-      <p className="text-xs text-slate-300 font-semibold uppercase mb-1">{label}</p>
+    <div className="bg-white/5 p-4 rounded-xl border border-white/10">
+      <p className="text-xs text-slate-400 font-semibold uppercase mb-1">{label}</p>
       <p className="text-2xl font-bold text-white mb-1">{value}</p>
-      <p className="text-xs text-slate-200">{subtitle}</p>
+      <p className="text-xs text-slate-400">{subtitle}</p>
     </div>
   );
 }
@@ -622,11 +622,11 @@ function ContextMetric({ label, value, max, inverted = false }) {
     : percentage > 70 ? 'bg-green-500' : percentage > 40 ? 'bg-yellow-500' : 'bg-red-500';
 
   return (
-    <div className="bg-white p-4 rounded-lg border border-blue-100">
-      <p className="text-xs text-slate-200 font-semibold mb-2">{label}</p>
+    <div className="bg-white/5 p-4 rounded-lg border border-white/10">
+      <p className="text-xs text-slate-300 font-semibold mb-2">{label}</p>
       <div className="flex items-end gap-2">
         <span className="text-2xl font-bold text-white">{value?.toFixed(1)}</span>
-        <span className="text-sm text-slate-300">/ {max}</span>
+        <span className="text-sm text-slate-400">/ {max}</span>
       </div>
       <div className="w-full bg-slate-200 rounded-full h-2 mt-2">
         <div className={`${color} h-2 rounded-full transition-all duration-500`} style={{ width: `${percentage}%` }}></div>

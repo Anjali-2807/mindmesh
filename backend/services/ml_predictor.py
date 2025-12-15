@@ -223,10 +223,28 @@ class MLPredictor:
     def calculate_decision_capacity(self, recent_logs):
         """Calculate capacity for making strategic decisions"""
         if len(recent_logs) < 3:
+            # Calculate partial context if some data exists
+            if len(recent_logs) > 0:
+                df = pd.DataFrame(recent_logs)
+                context = {
+                    'avg_mood': round(df['mood'].mean(), 1),
+                    'avg_energy': round(df['energy'].mean(), 1),
+                    'avg_stress': round(df['stress'].mean(), 1),
+                    'avg_sleep': round(df['sleep'].mean(), 1)
+                }
+            else:
+                context = {
+                    'avg_mood': 3.0,
+                    'avg_energy': 3.0,
+                    'avg_stress': 3.0,
+                    'avg_sleep': 7.0
+                }
+
             return {
                 'capacity': 50,
                 'confidence': 'low',
-                'message': 'Limited historical data. Using default capacity.'
+                'message': 'Limited historical data. Using default capacity.',
+                'context': context
             }
         
         df = pd.DataFrame(recent_logs)

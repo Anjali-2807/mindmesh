@@ -17,7 +17,7 @@ export default function JournalInput({ value, onChange, onAnalyze, isAnalyzing }
       
       <div className="relative">
         <textarea
-          className="w-full p-4 pb-16 rounded-xl bg-slate-50 border-2 border-slate-200 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none text-sm leading-relaxed resize-none"
+          className="w-full p-4 pb-16 rounded-xl bg-slate-50 border-2 border-slate-200 focus:bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10 transition-all outline-none text-sm leading-relaxed resize-none text-slate-900"
           placeholder="How are you feeling right now? What's on your mind? (e.g., 'I slept poorly and feel anxious about a deadline' or 'Having menstrual cramps and low energy today')"
           value={value}
           onChange={(e) => onChange(e.target.value)}

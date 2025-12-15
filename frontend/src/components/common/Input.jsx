@@ -31,7 +31,7 @@ export default function Input({
           placeholder={placeholder}
           className={`w-full h-12 ${icon ? 'pl-12' : 'pl-4'} pr-4 rounded-xl bg-slate-50 border-2 ${
             error ? 'border-red-500' : 'border-slate-200'
-          } text-white font-medium placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all`}
+          } text-slate-900 font-medium placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all`}
           {...props}
         />
       </div>
@@ -66,7 +66,7 @@ export function TextArea({
         rows={rows}
         className={`w-full p-4 rounded-xl bg-slate-50 border-2 ${
           error ? 'border-red-500' : 'border-slate-200'
-        } text-white font-medium placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all resize-none`}
+        } text-slate-900 font-medium placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all resize-none`}
         {...props}
       />
       {error && (
@@ -97,7 +97,7 @@ export function Select({
         onChange={(e) => onChange(e.target.value)}
         className={`w-full h-12 px-4 rounded-xl bg-slate-50 border-2 ${
           error ? 'border-red-500' : 'border-slate-200'
-        } text-white font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all cursor-pointer`}
+        } text-slate-900 font-medium placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent focus:bg-white transition-all cursor-pointer`}
         {...props}
       >
         {options.map((option, index) => (

@@ -4,9 +4,12 @@ from datetime import datetime, timedelta
 import json
 import traceback
 import numpy as np
+import jwt
+import functools
+from werkzeug.security import generate_password_hash, check_password_hash
 
 from config.settings import get_config
-from models.database import db, DailyLog, Decision, Pattern, Insight
+from models.database import db, User, DailyLog, Decision, Pattern, Insight
 from services.ml_predictor import MLPredictor
 from services.context_classifier import ContextClassifier
 from services.ai_engine import AIEngine
@@ -15,7 +18,11 @@ from utils.validators import validate_metrics, validate_decision_data
 
 # Initialize Flask app
 app = Flask(__name__)
-app.config.from_object(get_config())
+config = get_config()
+app.config.from_object(config)
+# Ensure SECRET_KEY is set
+if not app.config.get('SECRET_KEY'):
+    app.config['SECRET_KEY'] = 'dev-secret-key-change-in-prod'
 
 # Initialize extensions
 CORS(app, resources={r"/*": {"origins": "*"}})
@@ -46,6 +53,106 @@ def convert_to_serializable(obj):
     return obj
 
 
+# Auth Decorator
+def token_required(f):
+    @functools.wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+        if 'Authorization' in request.headers:
+            auth_header = request.headers['Authorization']
+            if auth_header.startswith('Bearer '):
+                token = auth_header.split(" ")[1]
+        
+        if not token:
+            return jsonify({'message': 'Authentication token is missing', 'error': 'Unauthorized'}), 401
+        
+        try:
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
+            current_user = db.session.get(User, data['user_id'])
+            if not current_user:
+                return jsonify({'message': 'User not found', 'error': 'Unauthorized'}), 401
+        except Exception as e:
+            return jsonify({'message': 'Token is invalid', 'error': 'Unauthorized'}), 401
+            
+        return f(current_user, *args, **kwargs)
+    return decorated
+
+
+# Auth Routes
+@app.route('/api/auth/register', methods=['POST'])
+def register():
+    try:
+        data = request.json
+        if not data or not data.get('username') or not data.get('email') or not data.get('password'):
+            return jsonify({'error': 'Missing required fields'}), 400
+            
+        if User.query.filter_by(email=data['email']).first():
+            return jsonify({'error': 'Email already registered'}), 400
+            
+        if User.query.filter_by(username=data['username']).first():
+            return jsonify({'error': 'Username already taken'}), 400
+            
+        hashed_password = generate_password_hash(data['password'])
+        new_user = User(
+            username=data['username'],
+            email=data['email'],
+            password_hash=hashed_password
+        )
+        
+        db.session.add(new_user)
+        db.session.commit()
+        
+        # Generate token
+        token = jwt.encode({
+            'user_id': new_user.id,
+            'exp': datetime.utcnow() + timedelta(days=7)
+        }, app.config['SECRET_KEY'], algorithm="HS256")
+        
+        return jsonify({
+            'message': 'User registered successfully',
+            'token': token,
+            'user': new_user.to_dict()
+        }), 201
+        
+    except Exception as e:
+        print(f"Registration error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/auth/login', methods=['POST'])
+def login():
+    try:
+        data = request.json
+        if not data or not data.get('email') or not data.get('password'):
+            return jsonify({'error': 'Missing email or password'}), 400
+            
+        user = User.query.filter_by(email=data['email']).first()
+        
+        if not user or not check_password_hash(user.password_hash, data['password']):
+            return jsonify({'error': 'Invalid email or password'}), 401
+            
+        # Generate token
+        token = jwt.encode({
+            'user_id': user.id,
+            'exp': datetime.utcnow() + timedelta(days=7)
+        }, app.config['SECRET_KEY'], algorithm="HS256")
+        
+        return jsonify({
+            'token': token,
+            'user': user.to_dict()
+        })
+        
+    except Exception as e:
+        print(f"Login error: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/auth/me', methods=['GET'])
+@token_required
+def get_current_user(current_user):
+    return jsonify({
+        'user': current_user.to_dict()
+    })
+
+
 # Initialize database and load models
 with app.app_context():
     db.create_all()
@@ -70,7 +177,8 @@ def health_check():
 
 
 @app.route('/api/analyze-journal', methods=['POST'])
-def analyze_journal():
+@token_required
+def analyze_journal(current_user):
     """Analyze journal text and extract metrics"""
     try:
         data = request.json
@@ -100,7 +208,8 @@ def analyze_journal():
 
 
 @app.route('/api/daily-log', methods=['POST'])
-def create_daily_log():
+@token_required
+def create_daily_log(current_user):
     """Create a new daily log entry"""
     try:
         data = request.json
@@ -144,7 +253,8 @@ def create_daily_log():
             context_confidence=classification['confidence'] if classification else None,
             plan_schedule=plan['schedule'],
             plan_environment=plan['environment'],
-            plan_nutrition=plan['nutrition']
+            plan_nutrition=plan['nutrition'],
+            user_id=current_user.id
         )
         
         db.session.add(log)
@@ -160,10 +270,10 @@ def create_daily_log():
             safety_response = context_classifier.get_safety_response(category, urgency)
         
         # Train ML model if we have enough data
-        logs_count = DailyLog.query.count()
+        logs_count = DailyLog.query.filter_by(user_id=current_user.id).count()
         if logs_count == 50 or logs_count % 100 == 0:
-            print(f"🔄 Retraining ML models with {logs_count} data points...")
-            historical_logs = DailyLog.query.all()
+            print(f"🔄 Retraining ML models for user {current_user.id} with {logs_count} data points...")
+            historical_logs = DailyLog.query.filter_by(user_id=current_user.id).all()
             import pandas as pd
             training_data = pd.DataFrame([{
                 'mood': log.mood,
@@ -214,7 +324,8 @@ def create_daily_log():
 
 
 @app.route('/api/decision/analyze', methods=['POST'])
-def analyze_decision():
+@token_required
+def analyze_decision(current_user):
     """Initial decision analysis - asks for more context if needed"""
     try:
         data = request.json
@@ -228,7 +339,10 @@ def analyze_decision():
         
         # Get recent logs for capacity calculation (handle empty case)
         week_ago = datetime.utcnow() - timedelta(days=7)
-        recent_logs = DailyLog.query.filter(DailyLog.timestamp >= week_ago).all()
+        recent_logs = DailyLog.query.filter(
+            DailyLog.timestamp >= week_ago, 
+            DailyLog.user_id == current_user.id
+        ).all()
         
         logs_data = [{
             'mood': log.mood,
@@ -317,7 +431,8 @@ def analyze_decision():
             confidence=float(confidence),
             avg_mood_7d=float(capacity_analysis['context']['avg_mood']),
             avg_energy_7d=float(capacity_analysis['context']['avg_energy']),
-            avg_stress_7d=float(capacity_analysis['context']['avg_stress'])
+            avg_stress_7d=float(capacity_analysis['context']['avg_stress']),
+            user_id=current_user.id
         )
         
         db.session.add(decision)
@@ -356,7 +471,8 @@ def analyze_decision():
 
 
 @app.route('/api/history', methods=['GET'])
-def get_history():
+@token_required
+def get_history(current_user):
     """Get daily log history"""
     try:
         days = request.args.get('days', 30, type=int)
@@ -364,7 +480,7 @@ def get_history():
         
         cutoff_date = datetime.utcnow() - timedelta(days=days)
         logs = DailyLog.query\
-            .filter(DailyLog.timestamp >= cutoff_date)\
+            .filter(DailyLog.timestamp >= cutoff_date, DailyLog.user_id == current_user.id)\
             .order_by(DailyLog.timestamp.desc())\
             .limit(limit)\
             .all()
@@ -378,12 +494,16 @@ def get_history():
 
 
 @app.route('/api/analytics', methods=['GET'])
-def get_analytics():
+@token_required
+def get_analytics(current_user):
     """Get analytics and insights"""
     try:
         days = request.args.get('days', 30, type=int)
         cutoff_date = datetime.utcnow() - timedelta(days=days)
-        logs = DailyLog.query.filter(DailyLog.timestamp >= cutoff_date).all()
+        logs = DailyLog.query.filter(
+            DailyLog.timestamp >= cutoff_date,
+            DailyLog.user_id == current_user.id
+        ).all()
         
         if not logs:
             return jsonify({
@@ -414,7 +534,8 @@ def get_analytics():
         for insight_data in insights[:5]:
             existing = Insight.query.filter_by(
                 title=insight_data['title'],
-                insight_type=insight_data['type']
+                insight_type=insight_data['type'],
+                user_id=current_user.id
             ).first()
             
             if not existing:
@@ -422,7 +543,8 @@ def get_analytics():
                     insight_type=insight_data['type'],
                     title=insight_data['title'],
                     message=insight_data['message'],
-                    priority=insight_data['priority']
+                    priority=insight_data['priority'],
+                    user_id=current_user.id
                 )
                 db.session.add(insight)
         
@@ -450,12 +572,16 @@ def get_analytics():
 
 
 @app.route('/api/analytics/advanced', methods=['GET'])
-def get_advanced_analytics():
+@token_required
+def get_advanced_analytics(current_user):
     """Get comprehensive advanced analytics with health score, correlations, forecasts, and insights"""
     try:
         days = request.args.get('days', 30, type=int)
         cutoff_date = datetime.utcnow() - timedelta(days=days)
-        logs = DailyLog.query.filter(DailyLog.timestamp >= cutoff_date).all()
+        logs = DailyLog.query.filter(
+            DailyLog.timestamp >= cutoff_date,
+            DailyLog.user_id == current_user.id
+        ).all()
         
         if not logs:
             return jsonify({
@@ -537,12 +663,15 @@ def get_advanced_analytics():
 
 
 @app.route('/api/insights', methods=['GET'])
-def get_insights():
+@token_required
+def get_insights(current_user):
     """Get saved insights"""
     try:
         unread_only = request.args.get('unread', 'false').lower() == 'true'
         
-        query = Insight.query.filter_by(is_dismissed=False)
+        unread_only = request.args.get('unread', 'false').lower() == 'true'
+        
+        query = Insight.query.filter_by(is_dismissed=False, user_id=current_user.id)
         if unread_only:
             query = query.filter_by(is_read=False)
         

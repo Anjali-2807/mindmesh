@@ -43,7 +43,7 @@ export default function PlanDisplay({ result, onReset, setView }) {
 
       {/* Context Info */}
       {context && (
-        <Card className="bg-blue-50/50 border-blue-200">
+        <Card className="bg-blue-900/10 border-blue-500/30">
           <div className="flex items-center gap-3 mb-3">
             <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
               <Globe className="text-white" size={20} />
@@ -54,12 +54,12 @@ export default function PlanDisplay({ result, onReset, setView }) {
             </div>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
-            <div className="bg-white p-3 rounded-lg">
-              <p className="text-xs text-slate-300 font-semibold uppercase">Category</p>
+            <div className="bg-white/5 p-3 rounded-lg">
+              <p className="text-xs text-slate-400 font-semibold uppercase">Category</p>
               <p className="font-bold text-white">{context.category}</p>
             </div>
-            <div className="bg-white p-3 rounded-lg">
-              <p className="text-xs text-slate-300 font-semibold uppercase">Confidence</p>
+            <div className="bg-white/5 p-3 rounded-lg">
+              <p className="text-xs text-slate-400 font-semibold uppercase">Confidence</p>
               <p className="font-bold text-white">{Math.round(context.confidence * 100)}%</p>
             </div>
             <div className="bg-white p-3 rounded-lg">
@@ -71,8 +71,8 @@ export default function PlanDisplay({ result, onReset, setView }) {
                 'text-green-600'
               }`}>{context.urgency}</p>
             </div>
-            <div className="bg-white p-3 rounded-lg">
-              <p className="text-xs text-slate-300 font-semibold uppercase">Keywords</p>
+            <div className="bg-white/5 p-3 rounded-lg">
+              <p className="text-xs text-slate-400 font-semibold uppercase">Keywords</p>
               <p className="font-bold text-white text-xs truncate">{context.keywords?.join(', ') || 'N/A'}</p>
             </div>
           </div>
@@ -103,8 +103,8 @@ export default function PlanDisplay({ result, onReset, setView }) {
 
       {/* Web Insights */}
       {web_insights && web_insights.length > 0 && (
-        <Card className="bg-purple-50/50 border-purple-200">
-          <div className="flex items-center gap-2 mb-4 text-purple-900">
+        <Card className="bg-purple-900/10 border-purple-500/30">
+          <div className="flex items-center gap-2 mb-4 text-purple-400">
             <Stethoscope size={20} />
             <h3 className="font-bold text-sm uppercase tracking-wide">Research & Resources</h3>
           </div>
@@ -112,16 +112,15 @@ export default function PlanDisplay({ result, onReset, setView }) {
             {web_insights.map((insight, idx) => (
               <a
                 key={idx}
-                href={insight.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block bg-white p-4 rounded-lg border border-purple-100 hover:shadow-md transition-all group"
+                className="block bg-white/5 p-4 rounded-lg border border-purple-500/20 hover:bg-white/10 transition-all group"
               >
-                <h4 className="font-bold text-white text-sm mb-1 flex items-center gap-2 group-hover:text-purple-600 transition-colors">
+                <h4 className="font-bold text-white text-sm mb-1 flex items-center gap-2 group-hover:text-purple-400 transition-colors">
                   {insight.title}
                   <ExternalLink size={12} className="opacity-30 group-hover:opacity-100" />
                 </h4>
-                <p className="text-slate-200 text-xs leading-relaxed mb-2">{insight.description}</p>
+                <p className="text-slate-300 text-xs leading-relaxed mb-2">{insight.description}</p>
                 {insight.solution && (
                   <p className="text-purple-700 text-xs font-medium">{insight.solution}</p>
                 )}
@@ -133,16 +132,16 @@ export default function PlanDisplay({ result, onReset, setView }) {
 
       {/* Resources */}
       {resources && resources.length > 0 && (
-        <Card className="bg-green-50/50 border-green-200">
-          <div className="flex items-center gap-2 mb-4 text-green-900">
+        <Card className="bg-green-900/10 border-green-500/30">
+          <div className="flex items-center gap-2 mb-4 text-green-400">
             <Shield size={20} />
             <h3 className="font-bold text-sm uppercase tracking-wide">Support Resources</h3>
           </div>
           <div className="grid gap-3">
             {resources.map((resource, idx) => (
-              <div key={idx} className="bg-white p-4 rounded-lg border border-green-100">
+              <div key={idx} className="bg-white/5 p-4 rounded-lg border border-green-500/20">
                 <h4 className="font-bold text-white text-sm">{resource.name}</h4>
-                <p className="text-slate-200 text-xs mt-1">
+                <p className="text-slate-300 text-xs mt-1">
                   {resource.contact && `Contact: ${resource.contact}`}
                   {resource.url && <a href={resource.url} target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">Visit Website</a>}
                 </p>

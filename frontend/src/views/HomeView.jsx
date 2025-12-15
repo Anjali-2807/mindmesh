@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowRight, Sparkles, AlertTriangle, Clock, Sun, Utensils, Globe, ExternalLink, Stethoscope, Shield } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 // Import Components
@@ -13,7 +14,11 @@ import PlanDisplay from '../components/home/PlanDisplay';
 
 const API_URL = 'http://127.0.0.1:5001/api';
 
-export default function HomeView({ setView }) {
+export default function HomeView() {
+  const navigate = useNavigate();
+  const setView = (viewName) => {
+    navigate(viewName === 'home' ? '/' : `/${viewName}`);
+  };
   const [form, setForm] = useState({
     mood: 3,
     energy: 3,
