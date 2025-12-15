@@ -86,7 +86,7 @@ MindMesh is an intelligent personal wellness and decision-making platform that c
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/mindmesh.git
+git clone https://github.com/Anjali-2807/mindmesh.git
 cd mindmesh
 ```
 
