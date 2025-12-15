@@ -25,7 +25,7 @@ class User(db.Model):
             'id': self.id,
             'username': self.username,
             'email': self.email,
-            'created_at': self.created_at.isoformat()
+            'created_at': self.created_at.isoformat() + 'Z'
         }
 
 class DailyLog(db.Model):
@@ -62,7 +62,7 @@ class DailyLog(db.Model):
             'id': self.id,
             'date': self.timestamp.strftime('%Y-%m-%d'),
             'time': self.timestamp.strftime('%H:%M'),
-            'timestamp': self.timestamp.isoformat(),
+            'timestamp': self.timestamp.isoformat() + 'Z',
             'mood': self.mood,
             'energy': self.energy,
             'stress': self.stress,
@@ -119,7 +119,7 @@ class Decision(db.Model):
         return {
             'id': self.id,
             'date': self.timestamp.strftime('%Y-%m-%d'),
-            'timestamp': self.timestamp.isoformat(),
+            'timestamp': self.timestamp.isoformat() + 'Z',
             'title': self.title,
             'description': self.description,
             'category': self.category,
@@ -171,14 +171,14 @@ class Pattern(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'detected_at': self.detected_at.isoformat(),
+            'detected_at': self.detected_at.isoformat() + 'Z',
             'pattern_type': self.pattern_type,
             'description': self.description,
             'confidence': self.confidence,
             'trigger_factors': json.loads(self.trigger_factors) if self.trigger_factors else None,
             'recommended_action': self.recommended_action,
             'times_observed': self.times_observed,
-            'last_observed': self.last_observed.isoformat(),
+            'last_observed': self.last_observed.isoformat() + 'Z',
             'is_active': self.is_active
         }
 
@@ -207,7 +207,7 @@ class Insight(db.Model):
     def to_dict(self):
         return {
             'id': self.id,
-            'generated_at': self.generated_at.isoformat(),
+            'generated_at': self.generated_at.isoformat() + 'Z',
             'insight_type': self.insight_type,
             'title': self.title,
             'message': self.message,

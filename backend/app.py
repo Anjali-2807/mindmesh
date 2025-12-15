@@ -167,7 +167,7 @@ def health_check():
     """Health check endpoint"""
     return jsonify({
         'status': 'healthy',
-        'timestamp': datetime.utcnow().isoformat(),
+        'timestamp': datetime.utcnow().isoformat() + 'Z',
         'services': {
             'database': 'connected',
             'ml_models': 'loaded' if ml_predictor.is_trained else 'not_loaded',
@@ -517,7 +517,7 @@ def get_analytics(current_user):
             'energy': log.energy,
             'stress': log.stress,
             'sleep': log.sleep,
-            'timestamp': log.timestamp.isoformat()
+            'timestamp': log.timestamp.isoformat() + 'Z'
         } for log in logs]
         
         # Get trend analysis
@@ -595,7 +595,7 @@ def get_advanced_analytics(current_user):
             'energy': log.energy,
             'stress': log.stress,
             'sleep': log.sleep,
-            'timestamp': log.timestamp.isoformat()
+            'timestamp': log.timestamp.isoformat() + 'Z'
         } for log in logs]
         
         # Calculate health score
