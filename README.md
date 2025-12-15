@@ -211,13 +211,13 @@ The frontend will start on `http://localhost:5173`
    - **Anomalies**: Identify unusual patterns
    - **Cycles**: Discover recurring patterns
    - **Correlations**: Understand metric relationships
-   - **AI Insights**: Get personalized observations
 
 #### Exploring Insights
 <!-- Screenshot: insights-page.png -->
 1. Go to the **Insights** tab
 2. View:
    - **Detected Patterns**: ML-identified patterns
+   - **AI Insights**: Get personalized observations
    - **Recommendations**: Actionable guidance
    - **Health Score**: Overall wellbeing metric
 
