@@ -9,7 +9,7 @@ export default function CorrelationMatrix({ correlations }) {
 
   const { correlations: corrList = [], strongest_correlation } = correlations;
 
-  // Helper to get correlation color
+  // Helper to get correlation colour
   const getCorrelationColor = (coefficient) => {
     const abs = Math.abs(coefficient);
     if (abs >= 0.7) {
