@@ -75,19 +75,9 @@ MindMesh is an intelligent personal wellness and decision-making platform that c
 - **PyJWT**: JSON Web Token authentication
 - **pandas & NumPy**: Data analysis and manipulation
 - **scikit-learn**: Machine learning algorithms
-- **Google Generative AI (Gemini)**: Advanced AI reasoning and insights
 
 ### Database
 - **SQLite**: Lightweight, serverless database
-
----
-
-## 📋 Prerequisites
-
-- **Node.js** (v16 or higher)
-- **Python** (v3.8 or higher)
-- **npm** or **yarn**
-- **Google AI API Key** (for Gemini AI features)
 
 ---
 
