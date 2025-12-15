@@ -404,37 +404,3 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
----
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
----
-
-## 👤 Author
-
-**Your Name**
-- GitHub: [@yourusername](https://github.com/yourusername)
-- Email: your.email@example.com
-
----
-
-## 🙏 Acknowledgments
-
-- Google Gemini AI for powerful language understanding
-- The React and Flask communities for excellent documentation
-- All open-source contributors whose libraries made this possible
-
----
-
-## 📞 Support
-
-If you have any questions or need help, please:
-- Open an issue on GitHub
-- Contact via email
-- Check the documentation
-
----
-
-**Built with ❤️ using React, Flask, and AI**
