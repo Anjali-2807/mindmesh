@@ -1,37 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Lightbulb, TrendingUp, AlertTriangle, Award, X, ThumbsUp, ThumbsDown } from 'lucide-react';
+import { Lightbulb, TrendingUp, AlertTriangle, Award, X, ThumbsUp, ThumbsDown, Calendar } from 'lucide-react';
 import axios from 'axios';
 import Card from '../components/common/Card';
 import { LoadingCard } from '../components/common/Loading';
+import InsightCards from '../components/analytics/InsightCards';
 
 const API_URL = 'http://127.0.0.1:5001/api';
 
 export default function InsightsView() {
-  const [insights, setInsights] = useState([]);
+  const [analytics, setAnalytics] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [filter, setFilter] = useState('all');
+  const [timeRange, setTimeRange] = useState(30);
 
   useEffect(() => {
-    fetchInsights();
-  }, []);
+    fetchData();
+  }, [timeRange]);
 
-  const fetchInsights = async () => {
+  const fetchData = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(`${API_URL}/insights`);
-      setInsights(response.data);
+      const response = await axios.get(`${API_URL}/analytics/advanced?days=${timeRange}`);
+      setAnalytics(response.data);
     } catch (error) {
-      console.error('Failed to fetch insights:', error);
+      console.error('Failed to fetch analytics:', error);
     } finally {
       setIsLoading(false);
     }
   };
-
-  const filteredInsights = insights.filter(insight => {
-    if (filter === 'all') return true;
-    return insight.insight_type === filter;
-  });
 
   if (isLoading) {
     return (
@@ -43,6 +39,16 @@ export default function InsightsView() {
     );
   }
 
+  if (!analytics || analytics.status === 'no_data') {
+    return (
+      <Card className="text-center py-16">
+        <Lightbulb size={48} className="mx-auto text-slate-300 mb-4" />
+        <p className="text-slate-200 text-lg mb-2">No insights yet</p>
+        <p className="text-slate-300 text-sm">Keep logging to get personalized AI insights</p>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -51,180 +57,143 @@ export default function InsightsView() {
           AI Insights
         </h1>
         <p className="text-slate-200 text-lg mt-2 font-medium">
-          Personalized recommendations based on your patterns
+          Personalized recommendations and patterns based on your data
         </p>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-2">
-        <FilterButton
-          label="All Insights"
-          active={filter === 'all'}
-          onClick={() => setFilter('all')}
-          count={insights.length}
-        />
-        <FilterButton
-          label="Trends"
-          active={filter === 'trend'}
-          onClick={() => setFilter('trend')}
-          count={insights.filter(i => i.insight_type === 'trend').length}
-        />
-        <FilterButton
-          label="Warnings"
-          active={filter === 'warning'}
-          onClick={() => setFilter('warning')}
-          count={insights.filter(i => i.insight_type === 'warning').length}
-        />
-        <FilterButton
-          label="Achievements"
-          active={filter === 'achievement'}
-          onClick={() => setFilter('achievement')}
-          count={insights.filter(i => i.insight_type === 'achievement').length}
-        />
-        <FilterButton
-          label="Alerts"
-          active={filter === 'alert'}
-          onClick={() => setFilter('alert')}
-          count={insights.filter(i => i.insight_type === 'alert').length}
-        />
-      </div>
+      {/* Time Range Selector */}
+      <TimeRangeSelector value={timeRange} onChange={setTimeRange} />
 
-      {/* Insights List */}
-      {filteredInsights.length === 0 ? (
-        <Card className="text-center py-16">
-          <Lightbulb size={48} className="mx-auto text-slate-300 mb-4" />
-          <p className="text-slate-200 text-lg mb-2">No insights yet</p>
-          <p className="text-slate-300 text-sm">Keep logging to get personalized AI insights</p>
+      {/* AI Insights & Recommendations */}
+      <InsightCards
+        insights={analytics.insights || []}
+        recommendations={analytics.recommendations || []}
+      />
+
+      {/* Detected Cycles */}
+      {analytics.cycles && analytics.cycles.status === 'success' && analytics.cycles.cycles.length > 0 && (
+        <Card className="bg-gradient-to-br from-cyan-900/20 to-blue-900/20 border-2 border-cyan-500/30">
+          <h3 className="font-bold text-white mb-4 text-xl flex items-center gap-2">
+            <Calendar size={24} className="text-cyan-400" />
+            Detected Cycles
+          </h3>
+          <div className="space-y-4">
+            {analytics.cycles.cycles.map((cycle, idx) => (
+              <div key={idx} className="bg-white/5 rounded-lg p-5 border border-cyan-500/20">
+                <div className="flex items-start justify-between gap-3 mb-3">
+                  <div>
+                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
+                      cycle.type === 'weekly' ? 'bg-cyan-500/20 text-cyan-300' : 'bg-purple-500/20 text-purple-300'
+                    }`}>
+                      {cycle.type} pattern
+                    </span>
+                    <h4 className="font-bold text-white mt-2 capitalize">{cycle.metric}</h4>
+                  </div>
+                </div>
+                <p className="text-slate-300 mb-3">{cycle.message}</p>
+                {cycle.weekday_avg && cycle.weekend_avg && (
+                  <div className="flex gap-4 text-sm">
+                    <div className="flex-1 bg-white/5 rounded-lg p-3">
+                      <div className="text-slate-400 font-semibold mb-1">Weekday Avg</div>
+                      <div className="text-2xl font-bold text-white">{cycle.weekday_avg}</div>
+                    </div>
+                    <div className="flex-1 bg-cyan-500/10 rounded-lg p-3">
+                      <div className="text-cyan-400 font-semibold mb-1">Weekend Avg</div>
+                      <div className="text-2xl font-bold text-cyan-300">{cycle.weekend_avg}</div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         </Card>
-      ) : (
-        <div className="space-y-4">
-          {filteredInsights.map(insight => (
-            <InsightCard
-              key={insight.id}
-              insight={insight}
-              onDismiss={() => {
-                setInsights(insights.filter(i => i.id !== insight.id));
-              }}
-            />
-          ))}
-        </div>
+      )}
+
+      {/* Weekly Summary */}
+      {analytics.weekly_summary && analytics.weekly_summary.status === 'success' && (
+        <Card className="bg-gradient-to-br from-violet-900/20 to-pink-900/20 border-2 border-violet-500/30">
+          <h3 className="font-bold text-white mb-2 text-xl">Weekly Summary</h3>
+          <p className="text-slate-300 mb-6">{analytics.weekly_summary.summary}</p>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            {/* Highlights */}
+            {analytics.weekly_summary.highlights.length > 0 && (
+              <div>
+                <h4 className="font-bold text-green-400 mb-3 flex items-center gap-2">
+                  <span>✨</span> Highlights
+                </h4>
+                <ul className="space-y-2">
+                  {analytics.weekly_summary.highlights.map((highlight, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-sm text-green-200 bg-green-500/10 rounded-lg p-3">
+                      <span>✓</span>
+                      <span>{highlight}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Lowlights */}
+            {analytics.weekly_summary.lowlights.length > 0 && (
+              <div>
+                <h4 className="font-bold text-amber-400 mb-3 flex items-center gap-2">
+                  <span>⚠️</span> Areas for Improvement
+                </h4>
+                <ul className="space-y-2">
+                  {analytics.weekly_summary.lowlights.map((lowlight, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-sm text-amber-200 bg-amber-500/10 rounded-lg p-3">
+                      <span>→</span>
+                      <span>{lowlight}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          {/* Achievements */}
+          {analytics.weekly_summary.achievements.length > 0 && (
+            <div className="mt-6 pt-6 border-t border-violet-500/30">
+              <h4 className="font-bold text-indigo-300 mb-4">🏆 Achievements Unlocked</h4>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                {analytics.weekly_summary.achievements.map((achievement, idx) => (
+                  <div key={idx} className="bg-white/5 rounded-xl p-4 text-center border-2 border-indigo-500/20">
+                    <div className="text-3xl mb-2">{achievement.icon}</div>
+                    <div className="font-bold text-white text-sm">{achievement.title}</div>
+                    <div className="text-xs text-slate-400 mt-1">{achievement.description}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </Card>
       )}
     </div>
   );
 }
 
-function FilterButton({ label, active, onClick, count }) {
-  return (
-    <button
-      onClick={onClick}
-      className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 ${
-        active
-          ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg'
-          : 'bg-white text-slate-700 border-2 border-slate-200 hover:border-amber-300'
-      }`}
-    >
-      {label}
-      <span className={`px-2 py-0.5 rounded-full text-xs font-bold ${
-        active ? 'bg-white/20' : 'bg-slate-100'
-      }`}>
-        {count}
-      </span>
-    </button>
-  );
-}
-
-function InsightCard({ insight, onDismiss }) {
-  const getIcon = () => {
-    const icons = {
-      trend: <TrendingUp size={24} />,
-      warning: <AlertTriangle size={24} />,
-      achievement: <Award size={24} />,
-      alert: <AlertTriangle size={24} />,
-      anomaly: <Lightbulb size={24} />
-    };
-    return icons[insight.insight_type] || <Lightbulb size={24} />;
-  };
-
-  const getColor = () => {
-    if (insight.priority === 'high' || insight.priority === 'critical') {
-      return {
-        bg: 'bg-red-50 border-red-200',
-        icon: 'bg-red-500 text-white',
-        badge: 'bg-red-100 text-red-700'
-      };
-    }
-    if (insight.priority === 'medium') {
-      return {
-        bg: 'bg-amber-50 border-amber-200',
-        icon: 'bg-amber-500 text-white',
-        badge: 'bg-amber-100 text-amber-700'
-      };
-    }
-    if (insight.insight_type === 'achievement') {
-      return {
-        bg: 'bg-green-50 border-green-200',
-        icon: 'bg-green-500 text-white',
-        badge: 'bg-green-100 text-green-700'
-      };
-    }
-    return {
-      bg: 'bg-blue-50 border-blue-200',
-      icon: 'bg-blue-500 text-white',
-      badge: 'bg-blue-100 text-blue-700'
-    };
-  };
-
-  const colors = getColor();
+function TimeRangeSelector({ value, onChange }) {
+  const options = [
+    { label: '7 Days', value: 7 },
+    { label: '30 Days', value: 30 },
+    { label: '90 Days', value: 90 }
+  ];
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, x: -100 }}
-      layout
-    >
-      <Card className={`${colors.bg} border-2 relative`}>
+    <div className="flex gap-2">
+      {options.map(option => (
         <button
-          onClick={onDismiss}
-          className="absolute top-4 right-4 text-slate-300 hover:text-slate-200 transition-colors"
+          key={option.value}
+          onClick={() => onChange(option.value)}
+          className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+            value === option.value
+              ? 'bg-gradient-to-r from-amber-600 to-orange-600 text-white shadow-lg'
+              : 'bg-white/5 text-slate-300 border-2 border-slate-700/50 hover:border-amber-400 hover:bg-white/10'
+          }`}
         >
-          <X size={20} />
+          {option.label}
         </button>
-
-        <div className="flex items-start gap-4 pr-8">
-          <div className={`w-12 h-12 ${colors.icon} rounded-xl flex items-center justify-center flex-shrink-0`}>
-            {getIcon()}
-          </div>
-
-          <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
-              <h3 className="font-bold text-white text-lg">{insight.title}</h3>
-              <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${colors.badge}`}>
-                {insight.priority}
-              </span>
-            </div>
-
-            <p className="text-slate-200 leading-relaxed mb-4">{insight.message}</p>
-
-            {insight.related_metric && (
-              <div className="bg-white/50 px-4 py-2 rounded-lg inline-block text-sm">
-                <span className="text-slate-200 font-medium">Related to: </span>
-                <span className="font-bold text-white capitalize">{insight.related_metric}</span>
-              </div>
-            )}
-
-            <div className="flex items-center gap-2 mt-4 pt-4 border-t border-slate-200">
-              <span className="text-xs text-slate-300 font-medium">Was this insight helpful?</span>
-              <button className="p-2 hover:bg-white rounded-lg transition-colors">
-                <ThumbsUp size={14} className="text-slate-200" />
-              </button>
-              <button className="p-2 hover:bg-white rounded-lg transition-colors">
-                <ThumbsDown size={14} className="text-slate-200" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </Card>
-    </motion.div>
+      ))}
+    </div>
   );
 }

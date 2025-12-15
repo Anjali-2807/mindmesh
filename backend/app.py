@@ -193,11 +193,31 @@ def analyze_journal(current_user):
         # Return sentiment-based metrics
         sentiment = classification['sentiment']
         
+        # Extract sleep hours from text if mentioned
+        sleep_hours = 7  # default
+        import re
+        # Look for patterns like "2 hours", "slept 3 hours", "only 4 hours of sleep", etc.
+        sleep_patterns = [
+            r'(\d+)\s*(?:hours?|hrs?)\s*(?:of\s+)?sleep',
+            r'slept?\s+(?:for\s+)?(\d+)\s*(?:hours?|hrs?)',
+            r'(?:only|just)\s+(\d+)\s*(?:hours?|hrs?)',
+            r'(\d+)\s*(?:hours?|hrs?)\s+(?:last\s+)?night'
+        ]
+        
+        text_lower = text.lower()
+        for pattern in sleep_patterns:
+            match = re.search(pattern, text_lower)
+            if match:
+                extracted_hours = int(match.group(1))
+                if 0 <= extracted_hours <= 24:  # Sanity check
+                    sleep_hours = extracted_hours
+                    break
+        
         return jsonify({
             'mood': sentiment['mood_score'],
             'energy': 3,
             'stress': 5 - sentiment['mood_score'] if sentiment['mood_score'] < 3 else 2,
-            'sleep': 7,
+            'sleep': sleep_hours,
             'classification': classification
         })
         

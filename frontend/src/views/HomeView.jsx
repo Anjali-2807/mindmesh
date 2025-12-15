@@ -41,7 +41,8 @@ export default function HomeView() {
         ...prevForm,
         mood: response.data.mood,
         energy: response.data.energy || prevForm.energy,
-        stress: response.data.stress
+        stress: response.data.stress,
+        sleep: response.data.sleep || prevForm.sleep
       }));
     } catch (error) {
       console.error('Analysis failed:', error);

@@ -8,7 +8,6 @@ import { LoadingCard } from '../components/common/Loading';
 
 // New analytics components
 import HealthScore from '../components/analytics/HealthScore';
-import InsightCards from '../components/analytics/InsightCards';
 import CorrelationMatrix from '../components/analytics/CorrelationMatrix';
 
 const API_URL = 'http://127.0.0.1:5001/api';
@@ -126,18 +125,11 @@ export default function AnalyticsView() {
         />
       </motion.div>
 
-      {/* Insights & Recommendations */}
-      <InsightCards
-        insights={advancedAnalytics.insights || []}
-        recommendations={advancedAnalytics.recommendations || []}
-      />
-
       {/* Tab Navigation */}
       <div className="flex gap-2 glass rounded-xl p-2 border border-white/20">
         {[
           { id: 'overview', label: 'Overview', icon: Activity },
-          { id: 'forecast', label: 'Forecast', icon: TrendingUp },
-          { id: 'patterns', label: 'Patterns', icon: Calendar }
+          { id: 'forecast', label: 'Forecast', icon: TrendingUp }
         ].map(tab => (
           <button
             key={tab.id}
@@ -291,113 +283,6 @@ export default function AnalyticsView() {
                   </div>
                 ))}
               </div>
-            </Card>
-          )}
-        </div>
-      )}
-
-      {activeTab === 'patterns' && (
-        <div className="space-y-8">
-          {/* Cycles */}
-          {advancedAnalytics.cycles && advancedAnalytics.cycles.status === 'success' && advancedAnalytics.cycles.cycles.length > 0 && (
-
-            <Card className="bg-gradient-to-br from-cyan-900/20 to-blue-900/20 border-2 border-cyan-500/30">
-              <h3 className="font-bold text-white mb-4 text-xl flex items-center gap-2">
-                <Calendar size={24} className="text-cyan-400" />
-                Detected Cycles
-              </h3>
-              <div className="space-y-4">
-                {advancedAnalytics.cycles.cycles.map((cycle, idx) => (
-                  <div key={idx} className="bg-white/5 rounded-lg p-5 border border-cyan-500/20">
-                    <div className="flex items-start justify-between gap-3 mb-3">
-                      <div>
-                        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase ${
-                          cycle.type === 'weekly' ? 'bg-cyan-500/20 text-cyan-300' : 'bg-purple-500/20 text-purple-300'
-                        }`}>
-                          {cycle.type} pattern
-                        </span>
-                        <h4 className="font-bold text-white mt-2 capitalize">{cycle.metric}</h4>
-                      </div>
-                    </div>
-                    <p className="text-slate-300 mb-3">{cycle.message}</p>
-                    {cycle.weekday_avg && cycle.weekend_avg && (
-                      <div className="flex gap-4 text-sm">
-                        <div className="flex-1 bg-white/5 rounded-lg p-3">
-                          <div className="text-slate-400 font-semibold mb-1">Weekday Avg</div>
-                          <div className="text-2xl font-bold text-white">{cycle.weekday_avg}</div>
-                        </div>
-                        <div className="flex-1 bg-cyan-500/10 rounded-lg p-3">
-                          <div className="text-cyan-400 font-semibold mb-1">Weekend Avg</div>
-                          <div className="text-2xl font-bold text-cyan-300">{cycle.weekend_avg}</div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </Card>
-          )}
-
-          {/* Weekly Summary */}
-          {advancedAnalytics.weekly_summary && advancedAnalytics.weekly_summary.status === 'success' && (
-
-            <Card className="bg-gradient-to-br from-indigo-900/20 to-purple-900/20 border-2 border-indigo-500/30">
-              <h3 className="font-bold text-indigo-300 mb-4 text-xl">Weekly Summary</h3>
-              <p className="text-lg text-indigo-200 leading-relaxed mb-6">
-                {advancedAnalytics.weekly_summary.summary}
-              </p>
-
-              <div className="grid md:grid-cols-2 gap-6">
-                {/* Highlights */}
-                {advancedAnalytics.weekly_summary.highlights.length > 0 && (
-                  <div>
-                    <h4 className="font-bold text-green-400 mb-3 flex items-center gap-2">
-                      <span>✨</span> Highlights
-                    </h4>
-                    <ul className="space-y-2">
-                      {advancedAnalytics.weekly_summary.highlights.map((highlight, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-sm text-green-200 bg-green-500/10 rounded-lg p-3">
-                          <span>✓</span>
-                          <span>{highlight}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                {/* Lowlights */}
-                {advancedAnalytics.weekly_summary.lowlights.length > 0 && (
-                  <div>
-                    <h4 className="font-bold text-amber-400 mb-3 flex items-center gap-2">
-                      <span>⚠️</span> Areas for Improvement
-                    </h4>
-                    <ul className="space-y-2">
-                      {advancedAnalytics.weekly_summary.lowlights.map((lowlight, idx) => (
-                        <li key={idx} className="flex items-start gap-2 text-sm text-amber-200 bg-amber-500/10 rounded-lg p-3">
-                          <span>→</span>
-                          <span>{lowlight}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-
-              {/* Achievements */}
-              {advancedAnalytics.weekly_summary.achievements.length > 0 && (
-                <div className="mt-6 pt-6 border-t border-indigo-500/30">
-                  <h4 className="font-bold text-indigo-300 mb-4">🏆 Achievements Unlocked</h4>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    {advancedAnalytics.weekly_summary.achievements.map((achievement, idx) => (
-                      <div key={idx} className="bg-white/5 rounded-xl p-4 text-center border-2 border-indigo-500/20">
-                        <div className="text-3xl mb-2">{achievement.icon}</div>
-                        <div className="font-bold text-white text-sm">{achievement.title}</div>
-                        <div className="text-xs text-slate-400 mt-1">{achievement.description}</div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
             </Card>
           )}
         </div>

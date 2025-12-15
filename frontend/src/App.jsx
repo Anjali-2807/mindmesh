@@ -15,6 +15,7 @@ import SignupView from './views/SignupView';
 // Import Components
 import Navigation from './components/common/Navigation';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import NeuralNetwork3D from './components/background/NeuralNetwork3D';
 import { AuthProvider, useAuth } from './context/AuthContext';
 
 // Navigation Wrapper to access AuthContext for conditional rendering
@@ -85,89 +86,8 @@ export default function App() {
         {/* Animated Background */}
         <div className="animated-bg"></div>
         
-        {/* Simple 3D Geometric Shapes - CSS Only */}
-        <div className="fixed inset-0 opacity-20 pointer-events-none" style={{ zIndex: 0 }}>
-          {/* Floating Spheres */}
-          <div 
-            className="shape-3d"
-            style={{ 
-              width: '250px', 
-              height: '250px', 
-              top: '15%', 
-              left: '10%',
-              animationDelay: '0s',
-              animationDuration: '25s'
-            }}
-          ></div>
-          <div 
-            className="shape-3d"
-            style={{ 
-              width: '180px', 
-              height: '180px', 
-              top: '60%', 
-              right: '15%',
-              animationDelay: '3s',
-              animationDuration: '28s'
-            }}
-          ></div>
-          <div 
-            className="shape-3d"
-            style={{ 
-              width: '200px', 
-              height: '200px', 
-              bottom: '15%', 
-              left: '60%',
-              animationDelay: '6s',
-              animationDuration: '26s'
-            }}
-          ></div>
-          
-          {/* Smaller Floating Particles */}
-          <div 
-            className="floating-particle"
-            style={{ 
-              width: '10px', 
-              height: '10px', 
-              background: '#818cf8',
-              top: '25%', 
-              left: '30%',
-              animationDelay: '1s'
-            }}
-          ></div>
-          <div 
-            className="floating-particle"
-            style={{ 
-              width: '12px', 
-              height: '12px', 
-              background: '#a78bfa',
-              top: '55%', 
-              right: '25%',
-              animationDelay: '2s'
-            }}
-          ></div>
-          <div 
-            className="floating-particle"
-            style={{ 
-              width: '8px', 
-              height: '8px', 
-              background: '#fbbf24',
-              top: '80%', 
-              left: '45%',
-              animationDelay: '4s'
-            }}
-          ></div>
-          <div 
-            className="floating-particle"
-            style={{ 
-              width: '11px', 
-              height: '11px', 
-              background: '#60a5fa',
-              top: '35%', 
-              right: '40%',
-              animationDelay: '0s'
-            }}
-          ></div>
-        </div>
+        {/* 3D Neural Network Diagrams */}
+        <NeuralNetwork3D />
 
         <NavigationWrapper isMobileMenuOpen={isMobileMenuOpen} setIsMobileMenuOpen={setIsMobileMenuOpen} />
 

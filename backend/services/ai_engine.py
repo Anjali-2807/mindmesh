@@ -369,31 +369,86 @@ class AIEngine:
         """Generate AI insights from data"""
         insights = []
         
-        # Trend insights
+        # Trend insights - LOWERED threshold from 0.5 to 0.3 for more insights
         for metric, trend in trends.items():
-            if trend['direction'] == 'declining' and trend['strength'] > 0.5:
+            if trend['direction'] == 'declining' and trend['strength'] > 0.3:
+                severity = 'high' if trend['strength'] > 0.6 else 'medium'
                 insights.append({
-                    'type': 'warning',
-                    'title': f'Declining {metric.capitalize()}',
-                    'message': f'Your {metric} has been declining. Consider adjusting your routine.',
-                    'priority': 'high'
+                    'type': 'warning' if severity == 'high' else 'trend',
+                    'title': f'Declining Trend Detected',
+                    'message': f'Your {metric} has been declining. It might be time to reassess your routine.',
+                    'priority': severity,
+                    'related_metric': metric
                 })
-            elif trend['direction'] == 'improving' and trend['strength'] > 0.5:
+            elif trend['direction'] == 'improving' and trend['strength'] > 0.3:
                 insights.append({
                     'type': 'achievement',
                     'title': f'Improving {metric.capitalize()}',
-                    'message': f'Great progress! Your {metric} is trending upward.',
-                    'priority': 'low'
+                    'message': f'Great progress! Your {metric} is trending upward. Keep up the good work!',
+                    'priority': 'medium',
+                    'related_metric': metric
+                })
+            elif trend['direction'] == 'stable':
+                insights.append({
+                    'type': 'trend',
+                    'title': f'Stable {metric.capitalize()}',
+                    'message': f'Your {metric} has been consistent. Stability is good!',
+                    'priority': 'low',
+                    'related_metric': metric
                 })
         
         # Pattern insights
         for pattern in patterns:
-            if pattern['severity'] == 'high':
+            if pattern['severity'] in ['high', 'medium']:
+                insight_type = 'alert' if pattern['severity'] == 'high' else 'trend'
                 insights.append({
-                    'type': 'alert',
+                    'type': insight_type,
                     'title': pattern['type'].replace('_', ' ').title(),
                     'message': pattern['description'],
-                    'priority': 'high'
+                    'priority': pattern['severity']
+                })
+        
+        # Add general observations if we have recent logs
+        if recent_logs and len(recent_logs) >= 3:
+            import pandas as pd
+            df = pd.DataFrame(recent_logs)
+            
+            # Sleep insights
+            avg_sleep = df['sleep'].mean()
+            if avg_sleep < 6.5:
+                insights.append({
+                    'type': 'warning',
+                    'title': 'Pattern Observed: Sleep Deficiency',
+                    'message': f'Irregular or insufficient sleep. Your average is {avg_sleep:.1f} hours.',
+                    'priority': 'high',
+                    'related_metric': 'sleep'
+                })
+            elif avg_sleep >= 7.5:
+                insights.append({
+                    'type': 'achievement',
+                    'title': 'Excellent Sleep Habits',
+                    'message': f'You\\\'re getting great sleep! Average: {avg_sleep:.1f} hours.',
+                    'priority': 'medium',
+                    'related_metric': 'sleep'
+                })
+            
+            # Stress insights
+            avg_stress = df['stress'].mean()
+            if avg_stress >= 3.5:
+                insights.append({
+                    'type': 'alert',
+                    'title': 'Elevated Stress Levels',
+                    'message': 'Your stress levels are concerning. Consider stress management techniques.',
+                    'priority': 'high',
+                    'related_metric': 'stress'
+                })
+            elif avg_stress <= 2.0:
+                insights.append({
+                    'type': 'achievement',
+                    'title': 'Zen Master',
+                    'message': 'Your stress management is excellent! Keep it up.',
+                    'priority': 'medium',
+                    'related_metric': 'stress'
                 })
         
         return sorted(insights, key=lambda x: {'high': 3, 'medium': 2, 'low': 1}[x['priority']], reverse=True)
