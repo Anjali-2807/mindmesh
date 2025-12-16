@@ -108,6 +108,13 @@ venv\Scripts\activate
 # Install dependencies
 pip install -r requirements.txt
 
+# If it gives Torch version error with Python, do this
+conda deactivate
+conda create -n mindmesh python=3.10 -y
+conda activate mindmesh
+pip install --upgrade pip setuptools wheel
+pip install -r requirements.txt
+
 # Create .env file
 cp .env.example .env
 
