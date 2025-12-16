@@ -27,7 +27,6 @@ MindMesh is an intelligent personal wellness and decision-making platform that c
 - **Anomaly Detection**: Automatically identifies unusual patterns in your data
 - **Cycle Recognition**: Discovers recurring patterns in your wellness metrics
 - **Correlation Analysis**: Understand how different metrics relate to each other
-- **AI Insights**: Get personalized insights based on your data trends
 
 ### 💡 Personalized Insights
 - **Pattern Recognition**: ML algorithms detect meaningful patterns in your data
@@ -118,8 +117,6 @@ pip install -r requirements.txt
 # Create .env file
 cp .env.example .env
 
-# Add your Google AI API key to .env
-# GOOGLE_API_KEY=your_api_key_here
 ```
 
 ### 3. Frontend Setup
@@ -264,21 +261,12 @@ The frontend will start on `http://localhost:5173`
 
 ![Analytics Overview](screenshots/analytics-overview.png)
 *Health score (65/100 Fair) with improving trend (high confidence), score breakdown showing energy (35%), stress (25%), mood (30%), and sleep (10%), plus interactive metric trends chart visualizing energy, mood, and stress over time*
-<!-- slide -->
+
 ![Sleep Patterns & Correlations](screenshots/analytics-correlations.png)
 *Sleep patterns bar chart showing daily sleep hours, metric correlations analysis revealing strong negative stress-mood relationship (-83%), moderate mood-energy (60%) and sleep-energy (45%) correlations, and key insights with actionable recommendations*
 
-#### 7-Day Forecast
-<!-- Add screenshot of forecast section -->
-*ML-powered predictions of future wellness states*
-
-#### Anomaly Detection
-<!-- Add screenshot of anomalies section -->
-*Automatic detection of unusual patterns*
-
-#### Correlation Matrix
-<!-- Add screenshot of correlation matrix -->
-*Visual representation of metric relationships*
+![7-Day Forecast](screenshots/analytics-forecast.png)
+*ML-powered predictions of future wellness states with confidence intervals*
 
 #### Insights Page
 ![Insights Page](screenshots/insights-page.png)
@@ -288,14 +276,12 @@ The frontend will start on `http://localhost:5173`
 
 ![About - Features](screenshots/about-page-1.png)
 *AI-Powered Decision Intelligence System overview showcasing context-seeking intelligence (comparison with generic systems), and core features including conversational analysis, two-tier optimization, pattern recognition, proactive insights, and safety-first approach*
-<!-- slide -->
+
 ![About - How It Works](screenshots/about-page-2.png)
 *Complete workflow from daily check-in to strategic decisions, core principles (context over speed, capacity-aware, reasoning over templates, privacy-first), and target users (students, professionals, anyone seeking clarity)*
-<!-- slide -->
+
 ![About - AI Technology](screenshots/about-page-3.png)
 *Advanced AI capabilities including Machine Learning (gradient boosting, random forest, pattern detection) and Natural Language Processing (zero-shot classification, VADER sentiment, context-aware dialogue generation)*
-
-
 ---
 
 ## 🗂️ Project Structure
@@ -310,7 +296,7 @@ mindmesh/
 │   │   └── database.py             # SQLAlchemy models
 │   ├── services/
 │   │   ├── ml_predictor.py         # ML forecasting & analysis
-│   │   └── ai_service.py           # Google Gemini AI integration
+│   │   └── ai_service.py           # AI integration
 │   └── instance/
 │       └── health_tracker.db       # SQLite database
 │
@@ -362,7 +348,7 @@ mindmesh/
 - Confidence intervals for predictions
 
 ### AI-Powered Insights
-- Google Gemini AI for natural language understanding
+- AI for natural language understanding
 - Context-aware recommendations
 - Personalized action planning
 
