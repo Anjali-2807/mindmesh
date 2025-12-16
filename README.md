@@ -262,13 +262,11 @@ The frontend will start on `http://localhost:5173`
 
 #### Analytics Dashboard
 
-````carousel
 ![Analytics Overview](screenshots/analytics-overview.png)
 *Health score (65/100 Fair) with improving trend (high confidence), score breakdown showing energy (35%), stress (25%), mood (30%), and sleep (10%), plus interactive metric trends chart visualizing energy, mood, and stress over time*
 <!-- slide -->
 ![Sleep Patterns & Correlations](screenshots/analytics-correlations.png)
 *Sleep patterns bar chart showing daily sleep hours, metric correlations analysis revealing strong negative stress-mood relationship (-83%), moderate mood-energy (60%) and sleep-energy (45%) correlations, and key insights with actionable recommendations*
-````
 
 #### 7-Day Forecast
 <!-- Add screenshot of forecast section -->
