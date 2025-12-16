@@ -288,7 +288,6 @@ The frontend will start on `http://localhost:5173`
 
 #### About Page
 
-````carousel
 ![About - Features](screenshots/about-page-1.png)
 *AI-Powered Decision Intelligence System overview showcasing context-seeking intelligence (comparison with generic systems), and core features including conversational analysis, two-tier optimization, pattern recognition, proactive insights, and safety-first approach*
 <!-- slide -->
@@ -297,7 +296,7 @@ The frontend will start on `http://localhost:5173`
 <!-- slide -->
 ![About - AI Technology](screenshots/about-page-3.png)
 *Advanced AI capabilities including Machine Learning (gradient boosting, random forest, pattern detection) and Natural Language Processing (zero-shot classification, VADER sentiment, context-aware dialogue generation)*
-````
+
 
 ---
 
