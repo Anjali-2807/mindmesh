@@ -282,7 +282,7 @@ The frontend will start on `http://localhost:5173`
 
 ![About - AI Technology](screenshots/about-page-3.png)
 *Advanced AI capabilities including Machine Learning (gradient boosting, random forest, pattern detection) and Natural Language Processing (zero-shot classification, VADER sentiment, context-aware dialogue generation)*
----
+
 
 ## 🗂️ Project Structure
 
